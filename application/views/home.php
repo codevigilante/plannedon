@@ -75,7 +75,15 @@
                     </div>
                 </div>
                 <div class="col-sm-7">
-                    <a href="#" class="btn btn-outline btn-xl page-scroll">Start Planning - It's Free!</a>
+                <div class="header-content">
+                        <div class="header-content-inner">
+                            <h1>Plan & Organize Your Daily Life Better</h1>
+                            <h4>Activity Planner lets you map out the things you need to do to feel really, really, really good about yourself, without forcing you into a rigid schedule. It's easy.
+                            It's free. It's life changing.</h4>
+                            <a href="#" class="btn btn-outline btn-xl page-scroll">Start Planning - It's Free!</a>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
