@@ -67,10 +67,49 @@
                 <div class="col-sm-5">
                     <div class="header-content">
                         <div class="header-content-inner">
-                            <h1>Plan & Organize Your Daily Life Better</h1>
-                            <h4>Activity Planner lets you map out the things you need to do to feel really, really, really good about yourself, without forcing you into a rigid schedule. It's easy.
-                            It's free. It's life changing.</h4>
-                            
+                            <h2>Get Started - It's Free</h2>
+                            <form>
+                                <div class="form-group row">
+                                <label for="inputName" class="col-sm-2 col-form-label">First Name</label>
+                                <div class="col-sm-10">
+                                    <input type="email" class="form-control" id="inputName" placeholder="First Name">
+                                </div>
+                                </div>
+                                <div class="form-group row">
+                                <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                                <div class="col-sm-10">
+                                    <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+                                </div>
+                                </div>
+                                <div class="form-group row">
+                                <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+                                <div class="col-sm-10">
+                                    <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                                </div>
+                                </div>
+                                <fieldset class="form-group row">
+                                    <legend class="col-form-legend col-sm-2">Options</legend>
+                                    <div class="col-sm-10">
+                                        <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                                            Public
+                                        </label>
+                                        </div>
+                                        <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                                            Private
+                                        </label>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="form-group row">
+                                <div class="offset-sm-2 col-sm-10">
+                                    <button type="submit" class="btn btn-primary">Start Planning</button>
+                                </div>
+                                </div>
+                            </form>                            
                         </div>
                     </div>
                 </div>
@@ -80,7 +119,6 @@
                             <h1>Plan & Organize Your Daily Life Better</h1>
                             <h4>Activity Planner lets you map out the things you need to do to feel really, really, really good about yourself, without forcing you into a rigid schedule. It's easy.
                             It's free. It's life changing.</h4>
-                            <a href="#" class="btn btn-outline btn-xl page-scroll">Start Planning - It's Free!</a>
                         </div>
                     </div>
                     
