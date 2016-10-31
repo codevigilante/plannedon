@@ -75,14 +75,17 @@
                 <div class="col-md-8">
                     <h1 class="text-center">Flexible, Simple Daily Planning</h1>
                     <hr />
-                    <p class="text-center">Activity Planner is a free app that lets you plan your daily activities and todos with the flexibility and ease you need.</p>
-                    <p class="text-center">It's simple, useful, and super easy to use. Oh, and it's also <em><b><u>FREE</u></b></em>!</p>
+                    <p class="text-center">Planned On is a linear calendar app that allows you to plan upcoming and future activities/events without worrying about times.</p>
+                    <p class="text-center">It's simple, useful, and super easy to use. Oh, and it's also <em><b><u>100% FREE</u></b></em>!</p>
                 </div>
 
                 <div class="col-md-4 well">
                     <h3 class="text-center">Get Started - It's Free!</h3>
                     <hr/>
-                    <form role="form" id="start-form" data-parsley-validate data-parsely-ui-enabled="true">
+                    <?php 
+                        echo validation_errors(); 
+                    ?>
+                    <form role="form" id="start-form" data-parsley-validate data-parsely-ui-enabled="true" method="post" action="./home/getstarted">
                         <div class="form-group">
                             <label class="sr-only" for="inputName">Name</label>
                             <div class="input-group input-group-lg" id="inputName">
