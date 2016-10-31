@@ -117,8 +117,8 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<?=link_tag('assets/bootstrap-3.3.7-dist/js/bootstrap.min.js');?>"></script>
-    <script src="<?=link_tag('assets/js/node_modules/parsleyjs/dist/parsley.js');?>"></script>
+    <script src="<?=base_url();?>assets/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script src="<?=base_url();?>assets/js/node_modules/parsleyjs/dist/parsley.js"></script>
     <script>
         Parsley.options.errorClass = "has-error";
         Parsley.options.successClass = "has-success";
