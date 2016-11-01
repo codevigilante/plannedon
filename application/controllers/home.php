@@ -1,6 +1,8 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE"); 
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Home extends CI_Controller 
 {
