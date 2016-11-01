@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>Activity Planner v0.1</title>
+    <title>Planned On v0.1</title>
 
     <!-- Bootstrap -->
     <link href="<?=base_url();?>assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,7 +32,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Activity Planner v0.1</a>
+                <a class="navbar-brand" href="#">Planned On v0.1</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -74,7 +74,7 @@
                 <div class="col-md-8">
                     <h1 class="text-center">Flexible, Simple Daily Planning</h1>
                     <hr />
-                    <p class="text-center">Planned On is a linear calendar app that allows you to plan upcoming and future activities/events without worrying about times.</p>
+                    <p class="text-center">Planned On is a linear calendar app that allows you to plan upcoming activities and events without worrying about times.</p>
                     <p class="text-center">It's simple, useful, and super easy to use. Oh, and it's also <em><b><u>100% FREE</u></b></em>!</p>
                 </div>
 
