@@ -23,9 +23,9 @@ class Home extends CI_Controller
 		{
 			$this->load->model('User');
 
-			$user_data = new UserData($this->input->post("firstname"), $this->input->post("email"));
+			//$user_data = new UserData($this->input->post("firstname"), $this->input->post("email"));
 
-			$result = $this->User->add($user_data, $this->input->post("password"));
+			//$result = $this->User->add($user_data, $this->input->post("password"));
 
 			/*if ($result["success"] === FALSE)
 			{
