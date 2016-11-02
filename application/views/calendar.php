@@ -1,7 +1,4 @@
 <?php 
-    echo $success;
-    echo $duplicate;
-    echo $error_msg;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,5 +20,6 @@
     <![endif]-->
   </head>
   <body>
+    <h1>Blood: <?=$success?></h1>
   </body>
 </html>
