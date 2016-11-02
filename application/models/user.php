@@ -19,11 +19,13 @@ class User extends CI_Model
 	{
 		$this->load->database();
 	}
-    
+
     public function add($user_data, $password)
     {
         $hashed = password_hash($password, PASSWORD_BCRYPT);
-        $result = array ("success" => FALSE, "duplicate" => FALSE, "error_msg" => "");
+        $result = array ("success" => FALSE, 
+                         "duplicate" => FALSE, 
+                         "error_msg" => "");
 
         return ($result);
         // check if user already exists
