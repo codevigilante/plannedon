@@ -23,6 +23,7 @@ class User extends CI_Model
     public function add($user_data, $password)
     {
         $hashed = password_hash($password, PASSWORD_BCRYPT);
+        print_r($hashed);
         $result = array ("success" => FALSE, 
                          "duplicate" => FALSE, 
                          "error_msg" => "");

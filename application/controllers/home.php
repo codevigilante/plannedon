@@ -36,7 +36,7 @@ class Home extends CI_Controller
 				redirect("/calendar");
 			}*/
 
-			redirect("/calendar");
+			//$this->load->view('calendar', $result);
 		}
 	}
 }

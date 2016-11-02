@@ -1,3 +1,5 @@
 <?php 
-    echo "welcome to calendar" 
+    echo $success;
+    echo $duplicate;
+    echo $error_msg;
 ?>
