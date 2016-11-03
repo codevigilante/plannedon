@@ -14,7 +14,26 @@
 | path to your installation.
 |
 */
-$config['base_url'] = 'http://' . getenv('OPENSHIFT_APP_DNS') . '/';
+$allowed_domains = array('localhost:7755', 'plannedon-env.us-east-1.elasticbeanstalk.com', 'plannedon.com');
+$default_domain  = 'localhost:7755';
+
+if (in_array($_SERVER['HTTP_HOST'], $allowed_domains, TRUE))
+{
+        $domain = $_SERVER['HTTP_HOST'];
+}
+else
+{
+        $domain = $default_domain;
+}
+
+if ( ! empty($_SERVER['HTTPS']))
+{
+        $config['base_url'] = 'https://'.$domain;
+}
+else
+{
+        $config['base_url'] = 'http://'.$domain;
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -191,7 +210,7 @@ $config['log_threshold'] = getenv('CI_ENV') == 'development' ? 4 : 0; // no logg
 | application/logs/ folder. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = getenv('OPENSHIFT_LOG_DIR');
+$config['log_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -213,7 +232,7 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 | system/cache/ folder.  Use a full server path with trailing slash.
 |
 */
-$config['cache_path'] = getenv('OPENSHIFT_DATA_DIR') . 'storage/framework/cache';
+$config['cache_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -246,13 +265,12 @@ $config['encryption_key'] = getenv('CI_KEY');
 */
 $config['sess_cookie_name']		= 'ci_session';
 $config['sess_expiration']		= 7200;
-$config['sess_expire_on_close']	= FALSE;
-$config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
-$config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
+//$config['sess_driver'] = '';
+//$config['sess_save_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
