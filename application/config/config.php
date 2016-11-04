@@ -17,8 +17,7 @@
 $allowed_domains = array('localhost:7755', 'plannedon-env.us-east-1.elasticbeanstalk.com', 'plannedon.com');
 $default_domain  = 'localhost:7755';
 
-error_log($_SERVER);
-print_r($_SERVER);
+print_r($_SERVER['HTTP_HOST']);
 
 if (in_array($_SERVER['HTTP_HOST'], $allowed_domains, TRUE))
 {
