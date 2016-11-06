@@ -28,7 +28,7 @@ else
         $domain = $default_domain;
 }
 
-if ( ! empty($_SERVER['HTTPS']))
+if ( !empty($_SERVER['HTTPS']))
 {
         $config['base_url'] = 'https://'.$domain;
 }
@@ -65,7 +65,7 @@ $config['index_page'] = '';
 | 'ORIG_PATH_INFO'	Uses the ORIG_PATH_INFO
 |
 */
-$config['uri_protocol']	= 'REQUEST_URI';
+$config['uri_protocol']	= 'AUTO';
 
 /*
 |--------------------------------------------------------------------------
