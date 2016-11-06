@@ -26,6 +26,8 @@ else
         $domain = $default_domain;
 }
 
+print_r($domain);
+
 if ( !empty($_SERVER['HTTPS']))
 {
         $config['base_url'] = 'https://'.$domain;
