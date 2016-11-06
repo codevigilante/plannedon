@@ -4,6 +4,7 @@ class Home extends CI_Controller
 {
 	public function index()
 	{
+		print_r("Blood tunnel");
 		$this->load->view('home');
 	}
 
