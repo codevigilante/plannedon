@@ -26,8 +26,6 @@ else
         $domain = $default_domain;
 }
 
-print_r($domain);
-
 if ( !empty($_SERVER['HTTPS']))
 {
         $config['base_url'] = 'https://'.$domain;
@@ -47,7 +45,7 @@ else
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '';
+$config['index_page'] = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
