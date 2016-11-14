@@ -4,7 +4,6 @@ class Home extends CI_Controller
 {
 	public function index()
 	{
-		print_r("Blood tunnel");
 		$this->load->view('home');
 	}
 
@@ -28,16 +27,16 @@ class Home extends CI_Controller
 
 			$result = $this->User->add($user_data, $this->input->post("password"));
 
-			/*if ($result["success"] === FALSE)
+			if ($result["success"] === FALSE)
 			{
 				$this->load->view("home", $result);
 			}
 			else
 			{
 				redirect("/calendar");
-			}*/
+			}
 
-			//$this->load->view('calendar', $result);
+			$this->load->view('calendar', $result);
 		}
 	}
 }
