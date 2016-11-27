@@ -1,6 +1,12 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
+    APP_VERSION - the current version of Planned On
+*/
+
+define("APP_VERSION", "v0.1");
+
+/*
 |--------------------------------------------------------------------------
 | File and Directory Modes
 |--------------------------------------------------------------------------
