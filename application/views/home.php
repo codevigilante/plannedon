@@ -3,14 +3,15 @@
         <div class="jumbotron">
             <div class="row">
                 <div class="col-md-8">
-                    <h1 class="text-center">Flexible, Simple Daily Planning</h1>
+                    <h1 class="text-center">Waste Less Time, Get Shit Done</h1>
+                    <h2 class="text-center">Daily Planning For Smart, Ambitious People</h2>
                     <hr />
-                    <p class="text-center">Planned On is a linear calendar app that allows you to plan upcoming activities and events without worrying about times.</p>
-                    <p class="text-center">It's simple, useful, and super easy to use. Oh, and it's also <em><b><u>100% FREE</u></b></em>!</p>
+                    <p class="text-center">Planned On is a linear calendar app that allows you to plan activities, events, and todos without worrying about times.</p>
+                    <p class="text-center">It's simple, useful, shareable, and super easy to use.</p>
                 </div>
 
                 <div class="col-md-4 well">
-                    <h3 class="text-center">Get Started - It's Free!</h3>
+                    <h3 class="text-center">Get Started</h3>
                     <hr/>
                     <?php if (isset($form_errors) && $form_errors == TRUE) : ?>
                         <div class="alert alert-danger" role="alert">

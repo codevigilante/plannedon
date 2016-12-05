@@ -40,7 +40,7 @@
                 -->
                 <ul class="nav navbar-nav navbar-right">
                     <?php if (isset($show_login) && $show_login == TRUE) : ?>
-                        <li><a class="btn btn-default" href="/login" role="button">Login</a></li>
+                        <li><a class="btn btn-default" href="/calendar" role="button">Go To My Calendar <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a></li>
                     <?php endif; ?>
                 </ul>
             </div><!-- /.navbar-collapse -->

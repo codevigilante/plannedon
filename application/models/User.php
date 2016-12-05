@@ -2,11 +2,12 @@
 
 class User extends CI_Model 
 {
-    public $id = 0;
+    public $id = -1;
     public $name = "";
     public $email = "";
     public $public = TRUE;
     public $password_hash = "";
+    public $remember = "";
     public $temp_password = FALSE;
 
 	public function __construct()
@@ -57,6 +58,7 @@ class User extends CI_Model
         $this->password_hash = $row->pswd_hash;
         $this->temp_password = $row->pswd_temp == 1;
         $this->public = $row->public == 1;
+        $this->remember = $row->remember;
 
         return (TRUE);
     }
@@ -77,6 +79,31 @@ class User extends CI_Model
         $this->db->insert("user", $data);
 
         return (TRUE);
+    }
+
+    public function setRemember($remember_string)
+    {
+        if (empty($remember_string))
+        {
+            return(FALSE);
+        }
+
+        if ($this->id >= 0)
+        {
+            $this->db->where("id", $this->id);
+        }
+        else if (empty($this->email))
+        {
+            return(FALSE);
+        }
+        else
+        {
+            $this->db->where("email", $this->email);
+        }
+        
+        $this->db->update("user", array("remember" => $remember_string));
+
+        return(TRUE);
     }
 }
 

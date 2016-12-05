@@ -8,7 +8,7 @@
         <div class="row">  
             <div class="col-md-4"></div>    
             <div class="col-md-4 well">
-                <h3 class="text-center">Login</h3>
+                <h3 class="text-center">My Calendar</h3>
                 <hr/>
                 <?php if (isset($form_errors) && $form_errors == TRUE) : ?>
                     <div class="alert alert-danger" role="alert">
@@ -29,6 +29,7 @@
                             <div class="input-group-addon help-block with-errors"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></div>
                         </div>
                     </div>
+                    <!--
                     <div class="form-group">
                         <label class="sr-only" for="inputPassword">Password</label>
                         <div class="input-group input-group-lg" id="inputPassword">
@@ -36,7 +37,8 @@
                             <div class="input-group-addon"><span class="glyphicon glyphicon-asterisk" aria-hidden="true"></div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg">Login</button> &nbsp;&nbsp;&nbsp;&nbsp;<a href="/login/help">I need help</a>
+                    -->
+                    <button type="submit" class="btn btn-primary btn-lg">Go</button></a>
                 </form>
             </div>
             <div class="col-md-4"></div>

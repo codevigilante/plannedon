@@ -1,25 +1,110 @@
-<?php 
-?>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>Planned On v0.1 - Calendar</title>
-
-    <!-- Bootstrap -->
-    <link href="<?=base_url();?>assets/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <h1>Blood: <?=$success?></h1>
-  </body>
+<div class="container-fluid">
+          <div class="row match-my-cols calendar-grid" id="week-0">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3 activity-week text-center">
+                        <p id="start-date-0"></p>
+                        <p>to</p>
+                        <p id="end-date-0"></p>
+                    </div>
+                    <div class="col-md-3" id="mon-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                    <div class="col-md-3" id="tue-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                    <div class="col-md-3" id="wed-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3" id="thu-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                    <div class="col-md-3" id="fri-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                    <div class="col-md-3" id="sat-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                    <div class="col-md-3" id="sun-0">
+                        <div class="day-heading"></div>
+                        <div class="list-group">
+                            <!--
+                            <a href="#" class="list-group-item active">
+                                Cras justo odio
+                            </a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                            -->
+                        </div>
+                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                    </div>
+                </div>      
+            </div>
+        </div>
+</div>
+</body>
 </html>

@@ -1,10 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Login extends CI_Controller 
+class Login extends MY_Controller 
 {
+    public function __construct()
+	{
+        parent::__construct();
+	}
+
 	public function index()
 	{
-        $this->loadLogin(array("page" => "Login"), array(), "login");
+        $this->loadLogin(array("page" => "Login"), array("show_login" => FALSE), array(), "login");
 	}
 
     public function validate()
@@ -12,28 +17,40 @@ class Login extends CI_Controller
         $this->load->library('form_validation');
 
 		$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email");
-		$this->form_validation->set_rules("password", "Password", "trim|required");
+		//$this->form_validation->set_rules("password", "Password", "trim|required");
 
 		$head_data = array("page" => "Login");
+        $nav_data = array("show_login" => FALSE);
 		
 		if ($this->form_validation->run() == FALSE)
         {
-            $this->loadLogin($head_data, array("form_errors" => TRUE), "login");
+            $this->loadLogin($head_data, $nav_data, array("form_errors" => TRUE), "login");
         }
         else
         {
             $this->load->model('User');
 
-            $valid = $this->User->validate($this->input->post("email"), $this->input->post("password"));
+            $exists = $this->User->fetch($this->input->post("email"));
 
-            if ($valid == FALSE)
+            //$valid = $this->User->validate($this->input->post("email"), $this->input->post("password"));
+
+            if ($exists)
             {
-                $this->loadLogin($head_data, array("valid" => FALSE), "login");
+                $this->LoginUser($this->User);
+            }
+            else
+            {
+                $this->loadLogin($head_data, $nav_data, array("valid" => FALSE), "login");
+            }
+
+            /*if ($valid == FALSE)
+            {
+                $this->loadLogin($head_data, $nav_data, array("valid" => FALSE), "login");
             }
             else
             {
                 redirect("/calendar");
-            }
+            }*/
         }
     }
 
@@ -44,10 +61,11 @@ class Login extends CI_Controller
 		$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email");
 
 		$head_data = array("page" => "Help");
+        $nav_data = array("show_login" => TRUE);
 		
 		if ($this->form_validation->run() == FALSE)
         {
-            $this->loadLogin($head_data, array("form_errors" => TRUE), "help");
+            $this->loadLogin($head_data, $nav_data, array("form_errors" => TRUE), "help");
         }
         else
         {
@@ -57,7 +75,7 @@ class Login extends CI_Controller
 
             if ($found == FALSE)
             {
-                $this->loadLogin($head_data, array("unfound" => TRUE), "help");
+                $this->loadLogin($head_data, $nav_data, array("unfound" => TRUE), "help");
             }
             else
             {
@@ -71,13 +89,13 @@ class Login extends CI_Controller
 
     public function help()
     {
-        $this->loadLogin(array("page" => "Help"), array(), "help");
+        $this->loadLogin(array("page" => "Help"), array("show_login" => TRUE), array(), "help");
     }
 
-    private function loadLogin($head_data, $body_data, $body)
+    private function loadLogin($head_data, $nav_data, $body_data, $body)
     {
         $this->load->view('head', $head_data);
-        $this->load->view('nav', array("show_login" => TRUE));
+        $this->load->view('nav', $nav_data);
 		$this->load->view($body, $body_data);
     }
 }
