@@ -2,11 +2,41 @@
 
 class MY_Controller extends CI_Controller
 {
+    protected $UserData = array("name" => "",
+                                "email" => "",
+                                "authed" => FALSE);
+
     public function __construct()
     {
         parent::__construct();
 
         $this->load->library("session");
+
+        $session_set = $this->session->has_userdata("authed");
+
+		if ($session_set)
+		{
+            $this->UserData["authed"] = $this->session->authed;
+            $this->UserData["email"] = $this->session->email;
+            $this->UserData["name"] = $this->session->name;
+
+            return;
+		}
+
+        $remember_cookie = $this->input->cookie("bloodfish_remember");
+
+        if (!empty($remember_cookie))
+        {
+            $this->load->model("User");
+            
+            $found = $this->User->fetchFromRemember($remember_cookie);
+
+            if ($found)
+            {
+                $this->GenerateRemember($this->User);
+                $this->BeginSession($this->User);
+            }
+        }
     }
 
     protected function GenerateRemember($user)
@@ -34,11 +64,11 @@ class MY_Controller extends CI_Controller
             return(FALSE);
         }
 
-        $session_data = array("name" => $user->name,
-                              "id" => $user->id,
-                              "email" => $user->email);
+        $this->UserData["name"] = $user->name;
+        $this->UserData["email"] = $user->email;
+        $this->UserData["authed"] = TRUE;
 
-        $this->session->set_userdata($session_data);
+        $this->session->set_userdata($this->UserData);
 
         return(TRUE);
     }
@@ -67,5 +97,19 @@ class MY_Controller extends CI_Controller
         $this->load->view("head");
         $this->load->view("nav");
         $this->load->view("internal_error", array("err_msg" => $err_msg));
+    }
+
+    protected function LoadHead($page)
+    {
+        $this->load->view("head", array("page" => $page));
+    }
+
+    protected function LoadNav($show_login)
+    {
+        $data = array("show_login" => $show_login,
+                      "authed" => $this->UserData["authed"],
+                      "user_name" => $this->UserData["name"]);
+
+        $this->load->view("nav", $data);
     }
 }

@@ -41,6 +41,23 @@ class User extends CI_Model
 
         $query = $this->db->get_where('user', array('email' => $this->email), 1);
 
+        return($this->setFromQuery($query));
+    }
+
+    public function fetchFromRemember($remember_token)
+    {
+        if (empty($remember_token))
+        {
+            return(FALSE);
+        }
+
+        $query = $this->db->get_where('user', array('remember' => $remember_token), 1);
+
+        return($this->setFromQuery($query));
+    }
+
+    private function setFromQuery($query)
+    {
         if ($query->num_rows() == 0)
         {
             return(FALSE);
@@ -60,7 +77,7 @@ class User extends CI_Model
         $this->public = $row->public == 1;
         $this->remember = $row->remember;
 
-        return (TRUE);
+        return(TRUE);
     }
 
     public function add($name, $email, $password)
@@ -88,19 +105,12 @@ class User extends CI_Model
             return(FALSE);
         }
 
-        if ($this->id >= 0)
-        {
-            $this->db->where("id", $this->id);
-        }
-        else if (empty($this->email))
+        if (empty($this->email))
         {
             return(FALSE);
         }
-        else
-        {
-            $this->db->where("email", $this->email);
-        }
         
+        $this->db->where("email", $this->email);        
         $this->db->update("user", array("remember" => $remember_string));
 
         return(TRUE);

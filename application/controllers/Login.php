@@ -9,7 +9,13 @@ class Login extends MY_Controller
 
 	public function index()
 	{
-        $this->loadLogin(array("page" => "Login"), array("show_login" => FALSE), array(), "login");
+        if ($this->UserData["authed"])
+        {
+            redirect("/calendar");
+            return;
+        }
+
+        $this->loadLogin("Login", array("show_login" => FALSE), array(), "login");
 	}
 
     public function validate()
@@ -19,7 +25,7 @@ class Login extends MY_Controller
 		$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email");
 		//$this->form_validation->set_rules("password", "Password", "trim|required");
 
-		$head_data = array("page" => "Login");
+		$head_data = "Login";
         $nav_data = array("show_login" => FALSE);
 		
 		if ($this->form_validation->run() == FALSE)
@@ -60,7 +66,7 @@ class Login extends MY_Controller
 
 		$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email");
 
-		$head_data = array("page" => "Help");
+		$head_data = "Help";
         $nav_data = array("show_login" => TRUE);
 		
 		if ($this->form_validation->run() == FALSE)
@@ -87,14 +93,22 @@ class Login extends MY_Controller
         }
     }
 
+    public function logout()
+    {
+        $this->session->sess_destroy();
+        $this->input->set_cookie("remember", "", 0);
+
+        redirect("/login");
+    }
+
     public function help()
     {
-        $this->loadLogin(array("page" => "Help"), array("show_login" => TRUE), array(), "help");
+        $this->loadLogin("Help", array("show_login" => TRUE), array(), "help");
     }
 
     private function loadLogin($head_data, $nav_data, $body_data, $body)
     {
-        $this->load->view('head', $head_data);
+        $this->LoadHead($head_data);
         $this->load->view('nav', $nav_data);
 		$this->load->view($body, $body_data);
     }

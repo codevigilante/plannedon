@@ -14,35 +14,28 @@
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <!--
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">Link</a></li>
-                    <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
-                        <li><a href="#">Something else here</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Separated link</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
-                    </ul>
-                    </li>
-                </ul>
-                <form class="navbar-form navbar-left">
-                    <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-                -->
-                <ul class="nav navbar-nav navbar-right">
-                    <?php if (isset($show_login) && $show_login == TRUE) : ?>
-                        <li><a class="btn btn-default" href="/calendar" role="button">Go To My Calendar <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></a></li>
+                    <?php if (isset($authed) && $authed == TRUE) : ?>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Welcome, <?=$user_name;?> <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/calendar">Goto My Calendar</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/login/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    <?php elseif (isset($show_login) && $show_login == TRUE) : ?>
+                        <li><a href="/login">Login</a></li>
                     <?php endif; ?>
                 </ul>
+                <!--
+                <form role="form" id="start-form" data-parsley-validate data-parsely-ui-enabled="true" method="post" action="/login/validate" class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">Quick Login</button>
+                </form>
+                -->
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>

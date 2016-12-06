@@ -9,7 +9,7 @@ class Home extends MY_Controller
 
 	public function index()
 	{
-		$this->loadHome(array("page" => "Hello"), array());
+		$this->loadHome(array());
 	}
 
 	public function getstarted()
@@ -20,14 +20,13 @@ class Home extends MY_Controller
 		$this->form_validation->set_rules("email", "Email Address", "trim|required|valid_email");
 		//$this->form_validation->set_rules("password", "Password", "trim|required");
 
-		$head_data = array("page" => "Hello");
 		$data = array("form_errors" => FALSE,
 					  "duplicate" => FALSE);
 
 		if ($this->form_validation->run() == FALSE)
 		{
 			$data["form_errors"] = TRUE;
-			$this->loadHome($head_data, $data);
+			$this->loadHome($data);
 		}
 		else
 		{
@@ -44,7 +43,7 @@ class Home extends MY_Controller
 				else
 				{
 					$data["duplicate"] = TRUE;
-					$this->loadHome($head_data, $data);
+					$this->loadHome($data);
 				}
 			}
 			else
@@ -59,10 +58,10 @@ class Home extends MY_Controller
 		}
 	}
 
-	private function loadHome($head_data, $body_data)
+	private function loadHome($body_data)
 	{
-		$this->load->view("head", $head_data);
-		$this->load->view("nav", array("show_login" => TRUE));
+		$this->LoadHead("Hello");
+		$this->LoadNav(TRUE);
 		$this->load->view("home", $body_data);
 	}
 }
