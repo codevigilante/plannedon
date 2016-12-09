@@ -34,8 +34,6 @@ class Login extends MY_Controller
         }
         else
         {
-            $this->load->model('User');
-
             $exists = $this->User->fetch($this->input->post("email"));
 
             //$valid = $this->User->validate($this->input->post("email"), $this->input->post("password"));
@@ -75,8 +73,6 @@ class Login extends MY_Controller
         }
         else
         {
-            $this->load->model('User');
-
             $found = $this->User->fetch($this->input->post("email"));
 
             if ($found == FALSE)
@@ -96,7 +92,13 @@ class Login extends MY_Controller
     public function logout()
     {
         $this->session->sess_destroy();
+
+        $series_cookie = $this->input->cookie("bloodfish_series");
+
+        $this->User->destroyRemember($series_cookie);
+
         $this->input->set_cookie("remember", "", 0);
+        $this->input->set_cookie("series", "", 0);
 
         redirect("/login");
     }

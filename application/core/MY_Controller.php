@@ -11,6 +11,7 @@ class MY_Controller extends CI_Controller
         parent::__construct();
 
         $this->load->library("session");
+        $this->load->model("User");
 
         $session_set = $this->session->has_userdata("authed");
 
@@ -24,11 +25,10 @@ class MY_Controller extends CI_Controller
 		}
 
         $remember_cookie = $this->input->cookie("bloodfish_remember");
+        $series_cookie = $this->input->cookie("bloodfish_series");
 
-        if (!empty($remember_cookie))
-        {
-            $this->load->model("User");
-            
+        if (!empty($remember_cookie) && !empty($series_cookie))
+        {            
             $found = $this->User->fetchFromRemember($remember_cookie);
 
             if ($found)
@@ -48,11 +48,19 @@ class MY_Controller extends CI_Controller
 
         $this->load->helper("globals");
 
-        $remember_string = randomPassword(25);
+        $remember_string = randomPassword(128);
+
+        $series_id = $this->input->cookie("series");
+
+        if (empty($series_id))
+        {
+            $series_id = randomPassword(25);
+            $this->input->set_cookie("series", $series_id, 1209600);
+        }
 
         $this->input->set_cookie("remember", $remember_string, 1209600);
 
-        $user->setRemember($remember_string);
+        $user->setRemember($series_id, $remember_string);
 
         return(TRUE);
     }
@@ -84,7 +92,7 @@ class MY_Controller extends CI_Controller
         $cookie_ok = $this->GenerateRemember($user);
         $session_ok = $this->BeginSession($user);
 
-        if ($cookie_ok && $session_ok)
+        if ($session_ok)
         {
             redirect("/calendar");
         }

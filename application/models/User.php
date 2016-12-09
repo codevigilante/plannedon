@@ -51,9 +51,21 @@ class User extends CI_Model
             return(FALSE);
         }
 
-        $query = $this->db->get_where('user', array('remember' => $remember_token), 1);
+        $query = $this->db->get_where('remember', array('token' => $remember_token), 1);
 
-        return($this->setFromQuery($query));
+        if ($query->num_rows() == 0)
+        {
+            return (FALSE);
+        }
+
+        $row = $query->row();
+
+        if (!isset($row))
+        {
+            return(FALSE);
+        }
+
+        return($this->fetch($row->email));
     }
 
     private function setFromQuery($query)
@@ -75,7 +87,6 @@ class User extends CI_Model
         $this->password_hash = $row->pswd_hash;
         $this->temp_password = $row->pswd_temp == 1;
         $this->public = $row->public == 1;
-        $this->remember = $row->remember;
 
         return(TRUE);
     }
@@ -98,22 +109,41 @@ class User extends CI_Model
         return (TRUE);
     }
 
-    public function setRemember($remember_string)
+    public function setRemember($series_id, $remember_string)
     {
-        if (empty($remember_string))
+        if (empty($remember_string) || empty($series_id) || empty($this->email))
         {
             return(FALSE);
         }
 
-        if (empty($this->email))
+        $query = $this->db->get_where("remember", array("email" => $this->email, "computer_id" => $series_id), 1);
+
+        if ($query->num_rows() > 0)
+        {
+            $this->db->where("email", $this->email);
+            $this->db->where("computer_id", $series_id);
+            $this->db->update("token", array("token" => $remember_string));
+        }
+        else
+        {
+            $data = array("email" => $this->User->email,
+                          "token" => $remember_string,
+                          "computer_id" => $series_id);
+
+            $this->db->insert("remember", $data);
+        }
+
+        return(TRUE);
+    }
+
+    public function destroyRemember($series)
+    {
+        if (empty($series))
         {
             return(FALSE);
         }
         
-        $this->db->where("email", $this->email);        
-        $this->db->update("user", array("remember" => $remember_string));
-
-        return(TRUE);
+        $this->db->delete("remember", array("computer_id" => $series));
     }
 }
 

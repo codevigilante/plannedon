@@ -38,7 +38,7 @@ class Home extends MY_Controller
 			{
 				if ($this->User->public)
 				{
-					redirect("/calendar");
+					$this->LoginUser($this->User);
 				}
 				else
 				{
