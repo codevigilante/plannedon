@@ -1,81 +1,223 @@
 <div class="container-fluid">
-    <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Activity</button>
-        <?php
-            $week = 1;
-            $current = TRUE;
-            $days = array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
-            $months = array("", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 
-            while ($week <= $weeks)
-            {
-                if ($week != 1)
-                {
-                    $current = FALSE;
-                }
-
-                $day_idx = ($week - 1) * 7;
-                $week_data = array($dates[$day_idx],
-                                    $dates[$day_idx + 1],
-                                    $dates[$day_idx + 2],
-                                    $dates[$day_idx + 3],
-                                    $dates[$day_idx + 4],
-                                    $dates[$day_idx + 5],
-                                    $dates[$day_idx + 6]);
-                $current_week = ($week == 1) ? "week-current" : "";
-        ?>
-        <div class="row match-my-cols calendar-grid" id="week-<?=$week;?>">
-            <div class="col-md-6">
-                <div class="row">
-                    <?php foreach($week_data as $day) : ?>            
-                    <?php if ($day["wday"] == 1) : ?>
-                    <div class="col-md-3 activity-week <?=$current_week;?> text-center" id="start-end">
-                        <p><?php echo $months[$day["mon"]] . " " . $day["mday"]; ?></p>
-                        <p>to</p>
-                        <p><?php echo $months[$week_data[6]["mon"]] . " " . $week_data[6]["mday"]; ?></p>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($day[0] < strtotime("today")) : ?>
-                    <div class="col-md-3 day-past" id="<?=$day["weekday"]."-".$week;?>">
-                    <?php else : ?>
-                    <div class="col-md-3" id="<?=$day["weekday"]."-".$week;?>">
-                    <?php endif; ?>                        
-                        <?php if ($day[0] == strtotime("today")) : ?>
-                        <div class="day-heading day-current">        
-                        <?php else : ?>
-                        <div class="day-heading"> 
-                        <?php endif; ?>                
-                            <?php if ($day["mday"] == 1) : ?>
-                                <span class="label label-info pull-left"><?php echo $months[$day["mon"]] . " " . $day["year"]; ?></span>
-                            <?php endif; ?>
-                            <?php echo $days[$day["wday"]] . " " . $day["mday"]; ?>
-                        </div>
-                        <div class="list-group">
-                        <!--
-                            <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                            <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                        -->                            
-                        </div>
-                        <div class="activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
-                    </div>
-                    <?php if ($day["wday"] == 3) : ?>
+    <!-- add activity form -->
+    <div class="modal fade" id="activityModal" tabindex="-1" role="dialog" aria-labelledby="activityModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="activityModalLabel">Activity Editor</h4>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <div class="row">
-                    <?php endif; ?>
-                    <?php endforeach; ?>
+                <div class="modal-body">
+                    <form id="add-activity">
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg" id="inputDate">
+                                <input class="form-control" id="when" name="when" placeholder="MM/DD/YYYY" type="text"/>
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg" id="inputTime"> 
+                                <div class="btn-group" data-toggle="buttons" id="time-frame">
+                                    <label class="btn btn-info active">
+                                        <input type="radio" name="frame" value="Morning" checked> Morning
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input type="radio" name="frame" value="Afternoon"> Afternoon
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input type="radio" name="frame" value="Evening"> Evening
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input type="radio" name="frame" value="Late"> Late
+                                    </label>
+                                    <label class="btn btn-info">
+                                        <input type="radio" name="frame" value="Any"> Any
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg" id="inputTime">
+                                <div class="input-group-addon">@</div>
+                                <input class="form-control" id="time" name="time" placeholder="Specific Time (optional)" type="text" size="5"/>
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-time" aria-hidden="true"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg" id="inputDescription">
+                                <input class="form-control" id="activity" name="activity" placeholder="Activity" type="text"/>
+                                <div class="input-group-addon"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group input-group-lg" id="deleteActivity">
+                                <button type="button" id="activity-delete" class="btn btn-danger" data-dismiss="modal">Delete Activity</button>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="update-add" value="0">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="activity-submit" class="btn btn-primary" data-dismiss="modal">Add</button>
+                    <button type="button" id="activity-update" class="btn btn-primary hidden" data-dismiss="modal">Update</button>
                 </div>
             </div>
         </div>
-        <?php                
-                $week++;
-            } // end while ($week ...)
-        ?>
-</div>
+    </div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="<?=base_url();?>assets/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-</body>
+    <button type="button" class="btn btn-primary" id="add-btn" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Activity</button>
+
+        <!-- weekly view (previous) -->
+        <?php for($i = 0; $i < $weeks_to_show; $i++) : ?>
+            <div class="row match-my-cols calendar-grid" id="week-<?=$i?>">
+                <div class="col-md-6">
+                    <div class="row">
+                    <?php if ($i == 1) : ?>
+                        <div class="col-md-3 activity-week week-current text-center">
+                    <?php else : ?>
+                        <div class="col-md-3 activity-week text-center">
+                    <?php endif; ?>
+                            <p id="start-date-<?=$i?>"></p>
+                            <p>to</p>
+                            <p id="end-date-<?=$i?>"></p>
+                        </div>
+                        <div class="col-md-3" id="mon-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                        <div class="col-md-3" id="tue-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                        <div class="col-md-3" id="wed-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-3" id="thu-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                        <div class="col-md-3" id="fri-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                        <div class="col-md-3" id="sat-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                        <div class="col-md-3" id="sun-<?=$i?>">
+                            <div class="day-heading"></div>
+                            <div class="list-group">
+                                <!--
+                                <a href="#" class="list-group-item active">
+                                    Cras justo odio
+                                </a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
+                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
+                                -->
+                            </div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                        </div>
+                    </div>      
+                </div>
+            </div>
+        <?php endfor; ?>            
+
+        <!-- dummy row to draw bottom border -->
+        <div class="row match-my-cols calendar-grid">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                    <div class="col-md-3"></div>
+                </div>      
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="<?=base_url();?>assets/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <script src="<?=base_url();?>assets/js/calendar.js"></script>
+  </body>
 </html>
