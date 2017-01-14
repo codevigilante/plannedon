@@ -94,39 +94,18 @@
                         <div class="col-md-3" id="mon-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="tue-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="wed-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
@@ -137,52 +116,24 @@
                         <div class="col-md-3" id="thu-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="fri-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="sat-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="sun-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
-                                <!--
-                                <a href="#" class="list-group-item active">
-                                    Cras justo odio
-                                </a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">AM</span> This is an activity that takes up a lot of space</a>
-                                <a href="#" class="list-group-item"><span class="label label-primary">1200</span> Gym - squats</a>
-                                -->
                             </div>
                             <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>

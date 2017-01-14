@@ -50,7 +50,7 @@ $( document ).ready(function()
     
     date_input.datepicker(
     {
-        format: 'mm/dd/yyyy',
+        format: 'yyyy-mm-dd',
         container: container,
         todayHighlight: true,
         autoclose: true,
@@ -58,8 +58,6 @@ $( document ).ready(function()
     {
         event.stopPropagation();
     });
-
-    buildCalendar();
 
     $( "#add-activity" ).submit(function( event ) 
     {
@@ -84,6 +82,7 @@ $( document ).ready(function()
             if (sourceActivity)
             {
                 sourceActivity.remove();
+
                 // ajax remove from database
             }
 
@@ -147,11 +146,36 @@ $( document ).ready(function()
         }
         else
         {
-            var dataStr = 'data-date="' + whenStr + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '"';          
+            $.ajax(
+                {
+                    url: "/calendar/add",
+                    success: function(result)
+                    {
+                        if (result < 0)
+                        {
+                            alert("Something went wrong");
 
-            $(listGroupId).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index++ + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>'); 
+                            return;
+                        }
 
-            // ajax add to database
+                        addActivityToListGroup(listGroupId, result, whenStr, timeFrame, time, activity);
+                    },
+                    error: function()
+                    {
+                        alert("Something went wrong. I'm sorry.");
+                    },
+                    method: 'POST',
+                    cache: false,
+                    data:
+                    {
+                        when: whenStr,
+                        timeframe: timeFrame,
+                        time: time,
+                        activity: activity
+                    },
+                    dataType: 'text'
+                }
+            );
         }       
     });
 
@@ -175,188 +199,140 @@ $( document ).ready(function()
 
     $(".list-group").sortable();
     $(".list-group").disableSelection();
+
+    // fetch activities /calendar/get(start, end)
+    var dates = calcDates();
+
+    $.ajax(
+        {
+            url: "/calendar/get",
+            success: function(result)
+            {
+                buildCalendar($.parseHTML(result.trim()), dates);               
+            },
+            error: function()
+            {
+                alert("Something went wrong trying to load the activities. I'm sorry.");
+            },
+            method: 'POST',
+            cache: false,
+            data:
+            {
+                start: dateToString(dates[0]),
+                end: dateToString(dates[dates.length-1])
+            },
+            dataType: 'html'
+        }
+    );
  });
 
- function buildCalendar()
+function calcDates()
+{
+    var dt = new Date();
+    dt.setHours(0, 0, 0, 0);
+    var daysSinceLastMonday = dt.getDay() + 6;
+
+    if (dt.getDay() == 0)
+    {
+        daysSinceLastMonday += 7;
+    }
+
+    dt.setDate(dt.getDate() - daysSinceLastMonday);
+
+    var dates = new Array();
+    var x = 0;
+    var daysToProcess = 9 * 7; // 9 weeks, 7 days/per week
+
+    while (x < daysToProcess)
+    {
+        dates[x] = new Date(dt);
+        dates[x].setDate(dates[x].getDate() + x);
+        dates[x].setHours(0, 0, 0, 0);
+
+        ++x;
+    }
+
+    return(dates);
+}
+
+function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity)
+{
+    var timeStr = (timeFrame === 'Any') ? "" : timeFrame;
+
+    if (time)
+    {
+        timeStr += " @ " + time;
+    }
+
+    var dataStr = 'data-date="' + when + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '"';          
+
+    $(listGroup).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>'); 
+                        
+}
+
+ function buildCalendar(activityHtml, dates)
  {
         var months = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+        var dayIdLookup = new Array("#sun-", "#mon-", "#tue-", "#wed-", "#thu-", "#fri-", "#sat-");
+        var dayAbbrLookup = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
         var today = new Date();
-        var dt = new Date();
-        var daysSinceLastMonday = dt.getDay() + 6;
+        var datesLength = dates.length; 
+        var dataHtml = $("<html/>").html(activityHtml);  
 
-        if (dt.getDay() == 0)
-        {
-            daysSinceLastMonday += 7;
-        }
+        today.setHours(0, 0, 0, 0);     
 
-        dt.setDate(dt.getDate() - daysSinceLastMonday);
+        //console.log(dataHtml.find(".date").data("value"));
 
-        var dates = new Array();
         var x = 0;
-        var daysToProcess = 9 * 7; // 9 weeks, 7 days/per week
-
-        while (x < daysToProcess)
-        {
-            dates[x] = new Date(dt);
-            dates[x].setDate(dates[x].getDate() + x);
-
-            ++x;
-        }
-
-        x = 0;
         var week = 0;
 
-        while (x < dates.length)
+        while (x < datesLength)
         {
+            var dayId = dayIdLookup[dates[x].getDay()] + week;
+            var dayAbbr = dayAbbrLookup[dates[x]. getDay()];
+
+            if (dates[x].getDate() == 1)
+            {
+                $(dayId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
+            }
+
+            var listGroup = dayId + " > .list-group";
+
+            $(dayId + " > .day-heading").append(dayAbbr + " " + dates[x].getDate());
+            $(listGroup).attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
+            $(dayId + " > .add-activity > .btn").attr("data-date",  dateToString(dates[x]));
+
+            if (dates[x].getTime() < today.getTime())
+            {
+                $(dayId).addClass("day-past");
+            }
+
+            dayCurrent(dates[x], today, dayId);
+
+            // if there's any activities for this day, add them here
+            var slashDate = dateToString(dates[x]);
+            var activities = dataHtml.find(".date[data-value='" + slashDate + "']");
+
+            if (activities)
+            {
+                activities.find(".activity").each(function(index)
+                {
+                    addActivityToListGroup(listGroup, $(this).data("id"), slashDate, $(this).data("time-frame"), $(this).data("time"), $(this).data("description"));
+                });
+            }
+            
             if (dates[x].getDay() == 1) // 1 = Monday
             {
                 var startDateId = "#start-date-" + week;
-                var monId = "#mon-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(monId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
 
                 $(startDateId).append(months[dates[x].getMonth()] + " " + dates[x].getDate());
-                $(monId + " > .day-heading").append("Mon " + dates[x].getDate());
-                $(monId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(monId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(monId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, monId);
-            }
-
-            if (dates[x].getDay() == 2)
-            {
-                var tueId = "#tue-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(tueId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
-
-                $(tueId + " > .day-heading").append("Tue " + dates[x].getDate());
-                $(tueId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(tueId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(tueId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, tueId);
-            }
-
-            if (dates[x].getDay() == 3)
-            {
-                var wedId = "#wed-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(wedId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
-
-                $(wedId + " > .day-heading").append("Wed " + dates[x].getDate());
-                $(wedId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(wedId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(wedId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, wedId);
-            }
-
-            if (dates[x].getDay() == 4)
-            {
-                var thuId = "#thu-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(thuId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
-
-                $(thuId + " > .day-heading").append("Thu " + dates[x].getDate());
-                $(thuId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(thuId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(thuId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, thuId);
-            }
-
-            if (dates[x].getDay() == 5)
-            {
-                var friId = "#fri-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(friId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
-
-                $(friId + " > .day-heading").append("Fri " + dates[x].getDate());
-                $(friId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(friId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(friId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, friId);
-            }
-
-            if (dates[x].getDay() == 6)
-            {
-                var satId = "#sat-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(satId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
-
-                $(satId + " > .day-heading").append("Sat " + dates[x].getDate());
-                $(satId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(satId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(satId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, satId);
             }
 
             if (dates[x].getDay() == 0) // 0 = Sunday
             {
                 var endDateId = "#end-date-" + week;
-                var sunId = "#sun-" + week;
-
-                if (dates[x].getDate() == 1)
-                {
-                    $(sunId + " > .day-heading").append('<span class="label label-info pull-left">' + months[dates[x].getMonth()] + ' ' + dates[x].getFullYear() + '</span>');
-                }
 
                 $(endDateId).append(months[dates[x].getMonth()] + " " + dates[x].getDate());     
-                $(sunId + " > .day-heading").append("Sun " + dates[x].getDate());
-                $(sunId + " > .list-group").attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-                $(sunId + " > .add-activity > .btn").attr("data-date", (dates[x].getMonth() + 1) + "/" + dates[x].getDate() + "/" + dates[x].getFullYear());
-
-                if (dates[x].getTime() < today.getTime())
-                {
-                    $(sunId).addClass("day-past");
-                }
-
-                dayCurrent(dates[x], today, sunId);
 
                 ++week;
             }
@@ -374,4 +350,11 @@ $( document ).ready(function()
             $(elementId + " > .day-heading").addClass("day-current");
             $("#add-btn").attr("data-date", (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear());
         }
+ }
+
+ function dateToString(date)
+ {
+     var str = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear();
+
+     return(str);
  }

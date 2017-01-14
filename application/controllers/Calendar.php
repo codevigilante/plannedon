@@ -24,8 +24,46 @@ class Calendar extends MY_Controller
 
 	public function get()
 	{
-		// GET or POST should contain start-date and end-date
+		$start = $this->input->post("start");
+		$end = $this->input->post("end");
+
+		if (empty($start) || empty($end))
+		{
+			return;
+		}
+
+		$this->load->model("Activity");
+		$result = $this->Activity->get($start, $end, $this->UserData["email"]);
+
+		//print_r($result);
+
+		$this->load->view("activity", $result);
 	}
+
+	public function add()
+	{
+		if (empty($this->input->post("when")))
+		{
+			echo "Nothing to do here.";
+
+			return;
+		}
+
+		$this->load->model("Activity");
+
+		$data = array(
+			"when" => $this->input->post("when"),
+			"timeframe" => $this->input->post("timeframe"),
+			"time" => $this->input->post("time"),
+			"activity" => $this->input->post("activity"),
+			"user_email" => $this->UserData["email"]
+		);
+
+		$result = $this->Activity->add($data);
+
+		echo $this->Activity->id;
+	}
+
 }
 
 /* End of file calendar.php */
