@@ -35,8 +35,6 @@ class Calendar extends MY_Controller
 		$this->load->model("Activity");
 		$result = $this->Activity->get($start, $end, $this->UserData["email"]);
 
-		//print_r($result);
-
 		$this->load->view("activity", $result);
 	}
 
@@ -61,7 +59,71 @@ class Calendar extends MY_Controller
 
 		$result = $this->Activity->add($data);
 
-		echo $this->Activity->id;
+		if ($result == FALSE)
+		{
+			echo "Failed to add";
+
+			return;
+		}
+
+		$data["id"] = $this->Activity->id;
+
+		echo json_encode($data);
+	}
+
+	public function update()
+	{
+		if (empty($this->input->post("index")))
+		{
+			echo "Nothing to do here.";
+
+			return;
+		}
+
+		$data = array(
+			"when" => $this->input->post("when"),
+			"timeframe" => $this->input->post("timeframe"),
+			"time" => $this->input->post("time"),
+			"activity" => $this->input->post("activity"),
+			"id" => $this->input->post("index"),
+			"user_email" => $this->UserData["email"]
+		);
+
+		$this->load->model("Activity");
+
+		$result = $this->Activity->update($data);
+
+		if ($result == FALSE)
+		{
+			echo "Failed to update";
+
+			return;
+		}
+
+		echo json_encode($data);
+	}
+
+	public function remove()
+	{
+		if (empty($this->input->post("index")))
+		{
+			echo "Nothing to do here.";
+
+			return;
+		}
+
+		$this->load->model("Activity");
+
+		$result = $this->Activity->delete($this->input->post("index"));
+
+		if ($result == FALSE)
+		{
+			echo "Failed to delete";
+
+			return;
+		}
+
+		echo $this->input->post("index");
 	}
 
 }

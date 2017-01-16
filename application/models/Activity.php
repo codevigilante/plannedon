@@ -20,7 +20,10 @@ class Activity extends CI_Model
 	{
 		// select * from activity where user_email="email" and date>=start and date<=end order by date ASC;
 
-		$query = $this->db->get_where('activity', array('user_email' => $user_email));
+		$this->db->where("date >=", $this->slashesToDashes($start));
+		$this->db->where("date <=", $this->slashesToDashes($end));
+		$this->db->where("user_email", $user_email);
+		$query = $this->db->get("activity");
 
 		$activities = array(
 			"user" => $user_email,
@@ -56,6 +59,35 @@ class Activity extends CI_Model
 		return ($activities);
 	}
 
+	public function getById($id)
+	{
+		$activity = array();
+
+		if (empty($id))
+        {
+			$this->id = -1;
+
+            return($activity);
+        }
+
+		$query = $this->db->get_where('activity', array('id' => $id));
+
+		if ($query->num_rows() <= 0)
+		{
+			return($activity);
+		}
+
+		$row = $query->row();
+
+		$activity["index"] = $id;
+		$activity["time"] = $row->time;
+		$actvitiy["description"] = $row->description;
+		$activity["time_frame"] = $row->time_frame;
+		$activity["date"] = $this->dashesToSlashes($row->date);
+
+		return($activity);
+	}
+
 	public function add($activityData)
 	{
 		if (empty($activityData) || empty($activityData["when"]) || empty($activityData["user_email"]))
@@ -77,9 +109,57 @@ class Activity extends CI_Model
         $this->db->insert("activity", $data);
 		$this->id = $this->db->insert_id();
 
-		//$this->sql = $this->db->set($data)->get_compiled_insert('activity');
-
         return (TRUE);
+	}
+
+	public function update($activityData)
+	{
+		if (empty($activityData) || empty($activityData["id"]))
+        {
+			$this->id = -1;
+
+            return(FALSE);
+        }
+
+		$current = $this->getById($activityData["id"]);
+
+		if (count($current) == 0)
+		{
+			return(FALSE);
+		}
+
+		$data = array("date" => $this->slashesToDashes($activityData["when"]),
+					  "time" => $activityData["time"],
+					  "time_frame" => $activityData["timeframe"],
+					  "description" => $activityData["activity"]
+					  );
+
+		$this->db->where("id", $activityData["id"]);
+		$this->db->update("activity", $data);
+
+		return (TRUE);
+	}
+
+	public function delete($id)
+	{
+		if (empty($id))
+        {
+			$this->id = -1;
+
+            return(FALSE);
+        }
+
+		$current = $this->getById($id);
+
+		if (count($current) == 0)
+		{
+			return(FALSE);
+		}
+
+		$this->db->where("id", $id);
+		$this->db->delete("activity");
+
+		return(TRUE);
 	}
 
 	private function slashesToDashes($date)

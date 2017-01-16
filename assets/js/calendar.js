@@ -1,6 +1,7 @@
 
-// save/update/delete to database
-// retrieve from database
+// limit activity query (i.e apply start and end dates)
+// highlight on add or update
+// change domain name to point to plannedon.com (or get another domain name)
 
 $( document ).ready(function() 
  {
@@ -50,7 +51,7 @@ $( document ).ready(function()
     
     date_input.datepicker(
     {
-        format: 'yyyy-mm-dd',
+        format: 'mm/dd/yyyy',
         container: container,
         todayHighlight: true,
         autoclose: true,
@@ -62,6 +63,7 @@ $( document ).ready(function()
     $( "#add-activity" ).submit(function( event ) 
     {
         event.preventDefault();
+
         // fish out form data
 
         var whenStr = $("#when").val().trim();
@@ -75,22 +77,6 @@ $( document ).ready(function()
             activityIndex = 0;
         }
 
-        var sourceActivity = $(".list-group").find('a[data-index=' + activityIndex + ']');
-
-        if (modalButtonClicked === "delete")
-        {
-            if (sourceActivity)
-            {
-                sourceActivity.remove();
-
-                // ajax remove from database
-            }
-
-            return;
-        }
-
-        // setup values
-
         if (!whenStr)
         {
             return;
@@ -101,64 +87,58 @@ $( document ).ready(function()
             timeFrame = "Any";
         }
 
-        var timeStr = (timeFrame === 'Any') ? "" : timeFrame;
-
-        if (time)
-        {
-            timeStr += " @ " + time;
-        }
-
         if (!activity)
         {
             activity = "???";
         }
 
-        if (modalButtonClicked === "update")
+        if (modalButtonClicked === "delete")
         {
-            if (sourceActivity)
-            {
-                var sourceWhen = sourceActivity.data('date');
-
-                if (sourceWhen !== whenStr)
+            $.ajax(
                 {
-                    sourceActivity.remove();
+                    url: "/calendar/remove",
+                    success: function(deletedIndex)
+                    {
+                        var sourceActivity = $(".list-group").find('a[data-index=' + deletedIndex + ']');
 
-                    modalButtonClicked = "add";
+                        if (sourceActivity)
+                        {
+                            sourceActivity.remove();
+                        }
+                    },
+                    error: function()
+                    {
+                        alert("Something went wrong. I'm sorry.");
+                    },
+                    method: 'POST',
+                    cache: false,
+                    data:
+                    {
+                        index: activityIndex
+                    },
+                    dataType: 'text'
                 }
-            }
+            );
         }
-        
-        var when = new Date(whenStr);
-        var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();         
-
-        if (modalButtonClicked === "update")
-        {
-            if (sourceActivity)
-            {
-                sourceActivity.data('date', whenStr);
-                sourceActivity.data('time-frame', timeFrame);
-                sourceActivity.data('time', time);
-                sourceActivity.data('activity', activity);
-                sourceActivity.html('<span class="label label-primary">' + timeStr + '</span> ' + activity);
-
-                // ajax update database
-            }
-        }
-        else
+        else if (modalButtonClicked === "add")
         {
             $.ajax(
                 {
                     url: "/calendar/add",
                     success: function(result)
                     {
-                        if (result < 0)
+                        // result is all the activity that was added
+                        if (!result)
                         {
-                            alert("Something went wrong");
+                            alert("Something went wrong creating activity. I'm sorry.");
 
                             return;
                         }
 
-                        addActivityToListGroup(listGroupId, result, whenStr, timeFrame, time, activity);
+                        var when = new Date(result.when);
+                        var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
+
+                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity);
                     },
                     error: function()
                     {
@@ -173,9 +153,77 @@ $( document ).ready(function()
                         time: time,
                         activity: activity
                     },
-                    dataType: 'text'
+                    dataType: 'json'
                 }
             );
+        }
+        else if (modalButtonClicked === "update")
+        {
+            $.ajax(
+                {
+                    url: "/calendar/update",
+                    success: function(result)
+                    {
+                        // result is all the activity that was added
+                        if (!result)
+                        {
+                            alert("Something went wrong creating activity. I'm sorry.");
+
+                            return;
+                        }
+
+                        var sourceActivity = $(".list-group").find('a[data-index=' + result.id + ']');
+                        var when = new Date(result.when);
+                        var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
+
+                        if (sourceActivity)
+                        {
+                            var sourceWhen = sourceActivity.data('date');
+
+                            if (sourceWhen !== whenStr)
+                            {
+                                sourceActivity.remove();
+
+                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity);
+                            }
+                            else
+                            {
+                                var timeStr = (result.timeframe === 'Any') ? "" : result.timeframe;
+
+                                if (result.time)
+                                {
+                                    timeStr += " @ " + result.time;
+                                }
+
+                                sourceActivity.data('date', result.when);
+                                sourceActivity.data('time-frame', result.timeframe);
+                                sourceActivity.data('time', result.time);
+                                sourceActivity.data('activity', result.activity);
+                                sourceActivity.html('<span class="label label-primary">' + timeStr + '</span> ' + result.activity);
+                            }
+                        }
+                    },
+                    error: function()
+                    {
+                        alert("Something went wrong. I'm sorry.");
+                    },
+                    method: 'POST',
+                    cache: false,
+                    data:
+                    {
+                        when: whenStr,
+                        timeframe: timeFrame,
+                        time: time,
+                        activity: activity,
+                        index: activityIndex
+                    },
+                    dataType: 'json'
+                }
+            );
+        }
+        else
+        {
+            // uh, what the fuck?
         }       
     });
 
@@ -208,6 +256,7 @@ $( document ).ready(function()
             url: "/calendar/get",
             success: function(result)
             {
+                console.log(result);
                 buildCalendar($.parseHTML(result.trim()), dates);               
             },
             error: function()
