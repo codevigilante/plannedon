@@ -52,7 +52,7 @@
 
                         <div class="form-group">
                             <div class="input-group input-group-lg" id="inputDescription">
-                                <input class="form-control" id="activity" name="activity" placeholder="Activity" type="text"/>
+                                <input class="form-control" id="activity" name="activity" placeholder="Activity/Event/Todo" type="text"/>
                                 <div class="input-group-addon"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></div>
                             </div>
                         </div>

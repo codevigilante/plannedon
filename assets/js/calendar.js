@@ -1,12 +1,33 @@
-
-// limit activity query (i.e apply start and end dates)
-// highlight on add or update
 // change domain name to point to plannedon.com (or get another domain name)
+// "deploy"
+// retain order of list items when moved around
+// allow drag and drop from one day to another
+// dissiminate between activity, event, todo
+// create an iphone app
+// create a desktop app
 
 $( document ).ready(function() 
  {
     var index = 1;
     var modalButtonClicked = undefined;
+    jQuery.fn.highlight = function () 
+    {
+        $(this).each(function () 
+        {
+            var el = $(this);
+            $("<div/>")
+                .width(el.outerWidth())
+                .height(el.outerHeight())
+                .css({
+                    "position": "absolute",
+                    "left": el.offset().left,
+                    "top": el.offset().top,
+                    "background-color": "#ffff99",
+                    "opacity": ".7",
+                    "z-index": "9999999"
+                }).appendTo('body').fadeOut(1000).queue(function () { $(this).remove(); });
+        });
+    }
 
     $('#activityModal').on('show.bs.modal', function (event)
         {
@@ -138,7 +159,7 @@ $( document ).ready(function()
                         var when = new Date(result.when);
                         var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
 
-                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity);
+                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, true);
                     },
                     error: function()
                     {
@@ -184,7 +205,7 @@ $( document ).ready(function()
                             {
                                 sourceActivity.remove();
 
-                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity);
+                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, true);
                             }
                             else
                             {
@@ -200,6 +221,7 @@ $( document ).ready(function()
                                 sourceActivity.data('time', result.time);
                                 sourceActivity.data('activity', result.activity);
                                 sourceActivity.html('<span class="label label-primary">' + timeStr + '</span> ' + result.activity);
+                                sourceActivity.highlight();
                             }
                         }
                     },
@@ -256,7 +278,7 @@ $( document ).ready(function()
             url: "/calendar/get",
             success: function(result)
             {
-                console.log(result);
+                //console.log(result);
                 buildCalendar($.parseHTML(result.trim()), dates);               
             },
             error: function()
@@ -304,7 +326,7 @@ function calcDates()
     return(dates);
 }
 
-function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity)
+function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity, emph = false)
 {
     var timeStr = (timeFrame === 'Any') ? "" : timeFrame;
 
@@ -316,7 +338,11 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
     var dataStr = 'data-date="' + when + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '"';          
 
     $(listGroup).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>'); 
-                        
+
+    if (emph)
+    {
+        $(listGroup).find(".list-group-item[data-index=" + index + "]").highlight();
+    }
 }
 
  function buildCalendar(activityHtml, dates)
