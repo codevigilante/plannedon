@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$allowed_domains = array('localhost:7755', 'plannedon-env.us-east-1.elasticbeanstalk.com', 'plannedon.com');
+$allowed_domains = array('localhost:7755', 'plannedon-env.us-east-1.elasticbeanstalk.com', 'plannedon.com', 'www.plannedon.com');
 $default_domain  = 'localhost:7755';
 
 if (in_array($_SERVER['HTTP_HOST'], $allowed_domains, TRUE))

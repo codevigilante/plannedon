@@ -1,8 +1,8 @@
-// change domain name to point to plannedon.com (or get another domain name)
-// "deploy"
 // retain order of list items when moved around
 // allow drag and drop from one day to another
 // dissiminate between activity, event, todo
+// ability to repeat something for X days/weeks/months
+// redesign the activities, make them more noticeable/organized/whatever
 // create an iphone app
 // create a desktop app
 
