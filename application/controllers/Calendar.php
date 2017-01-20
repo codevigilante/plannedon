@@ -54,6 +54,7 @@ class Calendar extends MY_Controller
 			"timeframe" => $this->input->post("timeframe"),
 			"time" => $this->input->post("time"),
 			"activity" => $this->input->post("activity"),
+			"relorder" => $this->input->post("relorder"),
 			"user_email" => $this->UserData["email"]
 		);
 
@@ -99,6 +100,23 @@ class Calendar extends MY_Controller
 
 			return;
 		}
+
+		echo json_encode($data);
+	}
+
+	public function updateorder()
+	{
+		if (empty($this->input->post("activities")))
+		{
+			echo "Nothing to do here.";
+
+			return;
+		}
+
+		$this->load->model("Activity");
+		$data = $this->input->post("activities");
+
+		$this->Activity->updateorder($data);
 
 		echo json_encode($data);
 	}

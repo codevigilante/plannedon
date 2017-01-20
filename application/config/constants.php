@@ -4,7 +4,7 @@
     APP_VERSION - the current version of Planned On
 */
 
-define("APP_VERSION", "v0.1");
+define("APP_VERSION", "v0.3");
 
 /*
 |--------------------------------------------------------------------------

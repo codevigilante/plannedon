@@ -20,7 +20,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group hidden">
                             <div class="input-group input-group-lg" id="inputTime"> 
                                 <div class="btn-group" data-toggle="buttons" id="time-frame">
                                     <label class="btn btn-info active">
@@ -64,6 +64,7 @@
                         </div>
 
                         <input type="hidden" id="update-add" value="0">
+                        <input type="hidden" id="order" value="0">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -74,8 +75,9 @@
             </div>
         </div>
     </div>
-
+<!--
     <button type="button" class="btn btn-primary" id="add-btn" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Activity</button>
+-->
 
         <!-- weekly view (previous) -->
         <?php for($i = 0; $i < $weeks_to_show; $i++) : ?>
@@ -95,19 +97,19 @@
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="tue-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="wed-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                     </div>
                 </div>
@@ -117,25 +119,25 @@
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="fri-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="sat-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                         <div class="col-md-3" id="sun-<?=$i?>">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" aria-label="Left Align" data-toggle="modal" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
                         </div>
                     </div>      
                 </div>

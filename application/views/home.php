@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <h1 class="text-center">Waste Less Time, Get Shit Done</h1>
-                    <h2 class="text-center">Daily Planning For Smart, Ambitious People</h2>
+                    <h2 class="text-center">Daily Planning For Smart People With Important Crap To Do</h2>
                     <hr />
                     <p class="text-center">Planned On is a linear calendar app that allows you to plan activities, events, and todos without worrying about times.</p>
                     <p class="text-center">It's simple, useful, shareable, and super easy to use.</p>

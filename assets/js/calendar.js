@@ -1,11 +1,3 @@
-// retain order of list items when moved around
-// allow drag and drop from one day to another
-// dissiminate between activity, event, todo
-// ability to repeat something for X days/weeks/months
-// redesign the activities, make them more noticeable/organized/whatever
-// create an iphone app
-// create a desktop app
-
 $( document ).ready(function() 
  {
     var index = 1;
@@ -36,14 +28,16 @@ $( document ).ready(function()
             var timeFrame = button.data('time-frame');
             var time = button.data('time');
             var activity = button.data('activity');
-            var toggle = button.data('index');
+            var index = button.data('index');
+            var order = button.data('order');
 
             $(this).find('.modal-body #when').val(date);
             $(this).find('.modal-body #time').val(time);
             $(this).find('.modal-body #activity').val(activity);
-            $(this).find('.modal-body #update-add').val(toggle);
+            $(this).find('.modal-body #update-add').val(index);
+            $(this).find('.modal-body #order').val(order);
             
-            if (toggle > 0)
+            if (index > 0)
             {
                 $(this).find('.modal-body #activity-delete').removeClass("hidden");
                 $(this).find('.modal-footer #activity-update').removeClass("hidden");
@@ -92,6 +86,7 @@ $( document ).ready(function()
         var time = $("#time").val().trim();
         var timeFrame = $("#time-frame input:checked").val();
         var activityIndex = $("#update-add").val();
+        var order = $("#order").val();
 
         if (!activityIndex)
         {
@@ -129,7 +124,7 @@ $( document ).ready(function()
                     },
                     error: function()
                     {
-                        alert("Something went wrong. I'm sorry.");
+                        alert("Something went wrong trying to remove the activity. I'm sorry.");
                     },
                     method: 'POST',
                     cache: false,
@@ -159,11 +154,11 @@ $( document ).ready(function()
                         var when = new Date(result.when);
                         var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
 
-                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, true);
+                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, result.relorder, true);
                     },
                     error: function()
                     {
-                        alert("Something went wrong. I'm sorry.");
+                        alert("Something went wrong adding activity. I'm sorry.");
                     },
                     method: 'POST',
                     cache: false,
@@ -172,7 +167,8 @@ $( document ).ready(function()
                         when: whenStr,
                         timeframe: timeFrame,
                         time: time,
-                        activity: activity
+                        activity: activity,
+                        relorder: order
                     },
                     dataType: 'json'
                 }
@@ -205,7 +201,9 @@ $( document ).ready(function()
                             {
                                 sourceActivity.remove();
 
-                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, true);
+                                var newOrder = $(listGroupId).children().length + 1
+
+                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, newOrder, true);
                             }
                             else
                             {
@@ -227,7 +225,7 @@ $( document ).ready(function()
                     },
                     error: function()
                     {
-                        alert("Something went wrong. I'm sorry.");
+                        alert("Something went wrong updating activity. I'm sorry.");
                     },
                     method: 'POST',
                     cache: false,
@@ -267,8 +265,56 @@ $( document ).ready(function()
         $( "#add-activity" ).submit();
     });
 
-    $(".list-group").sortable();
-    $(".list-group").disableSelection();
+    $(".list-group").sortable(
+        {
+            update: function(event, ui)
+            {
+                var listGroup = ui.item.parent();
+                var count = 1;
+                var data = [];
+
+                $(listGroup).children().each(function()
+                {
+                    var activity = { "id": $(this).data("index"), "order": count };
+                    
+                    ++count;
+
+                    data.push(activity);
+                });
+
+                $.ajax(
+                {
+                    url: "/calendar/updateorder",
+                    success: function(result)
+                    {
+                        $.each(result, function(index, element)
+                        {
+                            var listItem = $(".list-group-item[data-index=" + element.id + "]");
+                            
+                            listItem.data("order", element.order);
+
+                            listItem.parent().parent().find(".add-activity > .btn").data("order", parseInt(element.order) + 1);
+                        });     
+                    },
+                    error: function()
+                    {
+                        alert("Something went wrong trying reorder the activities. I'm sorry.");
+
+                        listGroup.sortable("cancel"); // revert items to original position
+                    },
+                    method: 'POST',
+                    cache: false,
+                    data:
+                    {
+                        activities: data
+                    },
+                    dataType: 'json'
+                });
+            },
+            revert: true
+            //connectWith: ".list-group"
+        }
+    ).disableSelection();
 
     // fetch activities /calendar/get(start, end)
     var dates = calcDates();
@@ -326,23 +372,35 @@ function calcDates()
     return(dates);
 }
 
-function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity, emph = false)
+function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity, order, emph = false)
 {
     var timeStr = (timeFrame === 'Any') ? "" : timeFrame;
+    var addBtn = $(listGroup).parent().find(".add-activity > .btn");
+    var orderAsInt = parseInt(order);
+    var addBtnOrder = parseInt(addBtn.data("order"));
 
     if (time)
     {
         timeStr += " @ " + time;
     }
 
-    var dataStr = 'data-date="' + when + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '"';          
+    if (addBtnOrder > orderAsInt)
+    {
+        orderAsInt = addBtnOrder;
+    }
+
+    var dataStr = 'data-date="' + when + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '" data-order="' + orderAsInt + '"';          
 
     $(listGroup).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>'); 
 
+    var addedItem = $(listGroup).find(".list-group-item[data-index=" + index + "]");
+
     if (emph)
     {
-        $(listGroup).find(".list-group-item[data-index=" + index + "]").highlight();
+        addedItem.highlight();
     }
+
+    addBtn.data("order", orderAsInt + 1);
 }
 
  function buildCalendar(activityHtml, dates)
@@ -355,8 +413,6 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
         var dataHtml = $("<html/>").html(activityHtml);  
 
         today.setHours(0, 0, 0, 0);     
-
-        //console.log(dataHtml.find(".date").data("value"));
 
         var x = 0;
         var week = 0;
@@ -390,10 +446,15 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
 
             if (activities)
             {
+                //var count = 0;
                 activities.find(".activity").each(function(index)
                 {
-                    addActivityToListGroup(listGroup, $(this).data("id"), slashDate, $(this).data("time-frame"), $(this).data("time"), $(this).data("description"));
+                    addActivityToListGroup(listGroup, $(this).data("id"), slashDate, $(this).data("time-frame"), $(this).data("time"), $(this).data("description"), $(this).data("order"));
+
+                    //++count;
                 });
+
+                //$(dayId + " > .add-activity > .btn").attr("data-order",  count + 1);
             }
             
             if (dates[x].getDay() == 1) // 1 = Monday

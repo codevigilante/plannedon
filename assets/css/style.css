@@ -53,13 +53,11 @@ body
 {
     padding-top:10px;
     font-size:32px;
-    background:#f1f1f1;
     color:#ccc;
 }
 
 .calendar-grid .week-current
 {
-    background:lightsteelblue;
     color: black;
 }
 
@@ -77,6 +75,12 @@ body
 {
     margin-bottom: -99999px;
     padding-bottom: 99999px;
+}
+
+.list-group
+{
+    min-height:50px;
+    border: 1px solid #eee;
 }
 
 .list-group .list-group-item

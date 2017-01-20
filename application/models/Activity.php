@@ -23,6 +23,7 @@ class Activity extends CI_Model
 		$this->db->where("date >=", $this->slashesToDashes($start));
 		$this->db->where("date <=", $this->slashesToDashes($end));
 		$this->db->where("user_email", $user_email);
+		$this->db->order_by("rel_order", "ASC");
 		$query = $this->db->get("activity");
 
 		$activities = array(
@@ -34,25 +35,22 @@ class Activity extends CI_Model
 
 		if ($query->num_rows() > 0)
 		{
-			$payload = $activities["payload"];
-			$curDate = strtotime("10 September 2000");
-
 			foreach($query->result() as $row)
 			{
 				$date = $this->dashesToSlashes($row->date);
 
-				if ($curDate != strtotime($date))
+				if (!array_key_exists($date, $activities["payload"]))
 				{
-					$activities["payload"][$date] = array();
-					$curDate = strtotime($date);
+					$activities["payload"][$date] = array();									
 				}
 
 				array_push($activities["payload"][$date], array(
 					"id" => $row->id,
 					"time" => $row->time,
 					"description" => $row->description,
-					"time_frame" => $row->time_frame
-				));
+					"time_frame" => $row->time_frame,
+					"rel_order" => $row->rel_order
+				));	
 			}
 		}
 
@@ -103,7 +101,8 @@ class Activity extends CI_Model
 					  "date" => $when,
 					  "time" => $activityData["time"],
 					  "description" => $activityData["activity"],
-					  "time_frame" => $activityData["timeframe"]
+					  "time_frame" => $activityData["timeframe"],
+					  "rel_order" => $activityData["relorder"]
 					  );
 
         $this->db->insert("activity", $data);
@@ -138,6 +137,24 @@ class Activity extends CI_Model
 		$this->db->update("activity", $data);
 
 		return (TRUE);
+	}
+
+	public function updateorder($activityData)
+	{
+		if (empty($activityData))
+        {
+            return(FALSE);
+        }
+
+		$data = array();
+
+		foreach($activityData as $activity)
+		{
+			$this->db->where("id", $activity["id"]);
+			$this->db->update("activity", array("rel_order" => $activity["order"]));
+		}
+		
+		return(TRUE);
 	}
 
 	public function delete($id)
