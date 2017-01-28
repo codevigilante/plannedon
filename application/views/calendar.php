@@ -62,9 +62,6 @@
                                 <button type="button" id="activity-delete" class="btn btn-danger" data-dismiss="modal">Delete Activity</button>
                             </div>
                         </div>
-
-                        <input type="hidden" id="update-add" value="0">
-                        <input type="hidden" id="order" value="0">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -93,51 +90,65 @@
                             <p>to</p>
                             <p id="end-date-<?=$i?>"></p>
                         </div>
-                        <div class="col-md-3" id="mon-<?=$i?>">
+                        <div class="col-md-3 day" id="mon-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="tue-<?=$i?>">
+                        <div class="col-md-3 day" id="tue-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="wed-<?=$i?>">
+                        <div class="col-md-3 day" id="wed-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
-                        </div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
+                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="row">
-                        <div class="col-md-3" id="thu-<?=$i?>">
+                        <div class="col-md-3 day" id="thu-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="fri-<?=$i?>">
+                        <div class="col-md-3 day" id="fri-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="sat-<?=$i?>">
+                        <div class="col-md-3 day" id="sat-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
-                        <div class="col-md-3" id="sun-<?=$i?>">
+                        <div class="col-md-3 day" id="sun-<?=$i?>" date="">
                             <div class="day-heading"></div>
                             <div class="list-group">
                             </div>
-                            <div class="add-activity text-center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-order="0" data-index="0" data-target="#activityModal" data-whatever=""><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></div>
+                            <div class="text-center actions">
+                                <a href="#" class="add-activity list-group-item text-center" data-toggle="modal" data-target="#activityModal" data-order="1"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                            </div>
                         </div>
                     </div>      
                 </div>

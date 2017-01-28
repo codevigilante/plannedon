@@ -15,10 +15,12 @@ AWS Elastic Beanstalk and RDS (MySQL)
 
 ## Coming Soon, or Sometime
 
-* Allow drag and drop from one day to another
+* "Genericize" controllers to eliminate repeated code
 * Ability to repeat something for X days/weeks/months
+* Better error handling and data passing around  
+* How to use, walkthrough
 * More info on how to plan effectively, and why it's good for us modern humans with shit to do (a, "This is how I use Planned On And Why" series)
-* Marketing
+* Marketing (slicker landing page, more images)
 * Toggle public/private
 
 * Create an iphone app

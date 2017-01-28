@@ -1,7 +1,13 @@
 $( document ).ready(function() 
  {
-    var index = 1;
-    var modalButtonClicked = undefined;
+    var EditingActivityInfo =
+    {
+        modalAction: undefined,
+        activityIndex: 0,
+        activityOrder: 0,
+        dayId: ""
+    };
+
     jQuery.fn.highlight = function () 
     {
         $(this).each(function () 
@@ -24,20 +30,19 @@ $( document ).ready(function()
     $('#activityModal').on('show.bs.modal', function (event)
         {
             var button = $(event.relatedTarget);
-            var date = button.data('date');
-            var timeFrame = button.data('time-frame');
+            var date = button.closest(".day").attr('date');
             var time = button.data('time');
             var activity = button.data('activity');
-            var index = button.data('index');
-            var order = button.data('order');
+
+            EditingActivityInfo.activityIndex = button.data('index');
+            EditingActivityInfo.activityOrder = button.data('order');
+            EditingActivityInfo.dayId = "#" + button.closest(".day").attr("id");
 
             $(this).find('.modal-body #when').val(date);
             $(this).find('.modal-body #time').val(time);
             $(this).find('.modal-body #activity').val(activity);
-            $(this).find('.modal-body #update-add').val(index);
-            $(this).find('.modal-body #order').val(order);
             
-            if (index > 0)
+            if (EditingActivityInfo.activityIndex > 0)
             {
                 $(this).find('.modal-body #activity-delete').removeClass("hidden");
                 $(this).find('.modal-footer #activity-update').removeClass("hidden");
@@ -49,16 +54,6 @@ $( document ).ready(function()
                 $(this).find('.modal-footer #activity-update').addClass("hidden");
                 $(this).find('.modal-footer #activity-submit').removeClass("hidden");
             }
-
-            var timeFrameRadios = $(this).find('.modal-body #time-frame input[name="frame"]');
-
-            timeFrameRadios.prop("checked", false);
-            timeFrameRadios.parent().removeClass("active");
-
-            if (timeFrame !== undefined)
-            {
-                timeFrameRadios.filter('[value=' + timeFrame + ']').prop("checked", true).parent().addClass("active");
-            }          
         });
 
     var date_input=$('input[name="when"]');
@@ -75,32 +70,27 @@ $( document ).ready(function()
         event.stopPropagation();
     });
 
+    // modal form submit
     $( "#add-activity" ).submit(function( event ) 
     {
         event.preventDefault();
 
-        // fish out form data
-
         var whenStr = $("#when").val().trim();
-        var activity = $("#activity").val().trim();
-        var time = $("#time").val().trim();
-        var timeFrame = $("#time-frame input:checked").val();
-        var activityIndex = $("#update-add").val();
-        var order = $("#order").val();
-
-        if (!activityIndex)
-        {
-            activityIndex = 0;
-        }
 
         if (!whenStr)
         {
             return;
         }
 
-        if (!timeFrame)
+        var activity = $("#activity").val().trim();
+        var time = $("#time").val().trim();
+        var sourceDayId = EditingActivityInfo.dayId;
+        var date = dateToString(new Date(whenStr));
+        var targetDayId = "#" + $(".day[date='" + date + "']").attr("id");
+
+        if (!EditingActivityInfo.activityIndex)
         {
-            timeFrame = "Any";
+            EditingActivityInfo.activityIndex = 0;
         }
 
         if (!activity)
@@ -108,211 +98,176 @@ $( document ).ready(function()
             activity = "???";
         }
 
-        if (modalButtonClicked === "delete")
+        var updateData = 
         {
-            $.ajax(
-                {
-                    url: "/calendar/remove",
-                    success: function(deletedIndex)
-                    {
-                        var sourceActivity = $(".list-group").find('a[data-index=' + deletedIndex + ']');
+            "date": whenStr,
+            "time": time,
+            "activity": activity,
+            "targetId": targetDayId
+        };
 
-                        if (sourceActivity)
-                        {
-                            sourceActivity.remove();
-                        }
-                    },
-                    error: function()
-                    {
-                        alert("Something went wrong trying to remove the activity. I'm sorry.");
-                    },
-                    method: 'POST',
-                    cache: false,
-                    data:
-                    {
-                        index: activityIndex
-                    },
-                    dataType: 'text'
+        if (EditingActivityInfo.modalAction === "delete")
+        {
+            updateData.ordering = [];
+            updateData.id = EditingActivityInfo.activityIndex;
+
+            populateOrdering(targetDayId, updateData.ordering, updateData.id);
+
+            ajaxActivity("/calendar/remove", updateData, "An error occurred trying to remove activity. I'm sorry.", "json", function(result)
+            {
+                if (!result)
+                {
+                    alert("Something went wrong trying to remove the activity. I'm sorry.");
+
+                    return;
                 }
-            );
+
+                var sourceActivity = $("#activity-" + result.id);
+
+                sourceActivity.remove();
+            });
         }
-        else if (modalButtonClicked === "add")
+        else if (EditingActivityInfo.modalAction === "add")
         {
-            $.ajax(
+            updateData.order = $(targetDayId + " > .list-group").children().length + 1;
+
+            ajaxActivity("/calendar/add", updateData, "Something went wrong creating activity. I'm sorry.", "json", function(result)
+            {
+                if (!result)
                 {
-                    url: "/calendar/add",
-                    success: function(result)
-                    {
-                        // result is all the activity that was added
-                        if (!result)
-                        {
-                            alert("Something went wrong creating activity. I'm sorry.");
+                    alert("Something went wrong creating activity. I'm sorry.");
 
-                            return;
-                        }
-
-                        var when = new Date(result.when);
-                        var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
-
-                        addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, result.relorder, true);
-                    },
-                    error: function()
-                    {
-                        alert("Something went wrong adding activity. I'm sorry.");
-                    },
-                    method: 'POST',
-                    cache: false,
-                    data:
-                    {
-                        when: whenStr,
-                        timeframe: timeFrame,
-                        time: time,
-                        activity: activity,
-                        relorder: order
-                    },
-                    dataType: 'json'
+                    return;
                 }
-            );
+
+                var targetListGroup = $(result.targetId + " > .list-group");
+
+                addActivityToListGroup(targetListGroup, result.id, result.time, result.activity, result.order, true);
+            });
         }
-        else if (modalButtonClicked === "update")
+        else if (EditingActivityInfo.modalAction === "update")
         {
-            $.ajax(
+            updateData.id = EditingActivityInfo.activityIndex;
+
+            if (sourceDayId === targetDayId)
+            {
+                
+            }
+            else
+            {
+                updateData.ordering = [];
+
+                populateOrdering(targetDayId, updateData.ordering);
+
+                updateData.ordering.push({ id: updateData.id, order: updateData.ordering.length + 1 });
+
+                populateOrdering(sourceDayId, updateData.ordering, updateData.id);                
+            }
+
+            ajaxActivity("/calendar/update", updateData, "Something went wrong updating the activity. I'm sorry.", "json", function(result)
+            {
+                // result is all the activity that was added
+                if (!result)
                 {
-                    url: "/calendar/update",
-                    success: function(result)
-                    {
-                        // result is all the activity that was added
-                        if (!result)
-                        {
-                            alert("Something went wrong creating activity. I'm sorry.");
+                    alert("Something went wrong updating the activity. I'm sorry.");
 
-                            return;
-                        }
-
-                        var sourceActivity = $(".list-group").find('a[data-index=' + result.id + ']');
-                        var when = new Date(result.when);
-                        var listGroupId = "#" + when.getFullYear() + "-" + (when.getMonth() + 1) + "-" + when.getDate();
-
-                        if (sourceActivity)
-                        {
-                            var sourceWhen = sourceActivity.data('date');
-
-                            if (sourceWhen !== whenStr)
-                            {
-                                sourceActivity.remove();
-
-                                var newOrder = $(listGroupId).children().length + 1
-
-                                addActivityToListGroup(listGroupId, result.id, result.when, result.timeframe, result.time, result.activity, newOrder, true);
-                            }
-                            else
-                            {
-                                var timeStr = (result.timeframe === 'Any') ? "" : result.timeframe;
-
-                                if (result.time)
-                                {
-                                    timeStr += " @ " + result.time;
-                                }
-
-                                sourceActivity.data('date', result.when);
-                                sourceActivity.data('time-frame', result.timeframe);
-                                sourceActivity.data('time', result.time);
-                                sourceActivity.data('activity', result.activity);
-                                sourceActivity.html('<span class="label label-primary">' + timeStr + '</span> ' + result.activity);
-                                sourceActivity.highlight();
-                            }
-                        }
-                    },
-                    error: function()
-                    {
-                        alert("Something went wrong updating activity. I'm sorry.");
-                    },
-                    method: 'POST',
-                    cache: false,
-                    data:
-                    {
-                        when: whenStr,
-                        timeframe: timeFrame,
-                        time: time,
-                        activity: activity,
-                        index: activityIndex
-                    },
-                    dataType: 'json'
+                    return;
                 }
-            );
+
+                if (result.hasOwnProperty("ordering"))
+                {
+                    var sourceActivity = $("#activity-" + result.id);
+
+                    sourceActivity.remove();
+
+                    var targetListGroup = $(result.targetId + " > .list-group");
+
+                    addActivityToListGroup(targetListGroup, result.id, result.time, result.activity, targetListGroup.children().length + 1, true);
+                }
+                else
+                {
+                    var sourceActivity = $("#activity-" + result.id);
+
+                    sourceActivity.data('time', result.time);
+                    sourceActivity.data('activity', result.activity);
+                    sourceActivity.html('<span class="label label-primary">' + timeToString(result.time) + '</span> ' + result.activity);
+                    sourceActivity.highlight();
+                }
+            });
         }
         else
         {
             // uh, what the fuck?
-        }       
+        }
     });
 
     $( "#activity-submit" ).click(function() 
     {
-        modalButtonClicked = "add";
+        EditingActivityInfo.modalAction = "add";
         $( "#add-activity" ).submit();
     });
 
     $( "#activity-delete" ).click(function() 
     {
-        modalButtonClicked = "delete";
+        EditingActivityInfo.modalAction = "delete";
         $( "#add-activity" ).submit();
     });
 
     $( "#activity-update" ).click(function() 
     {
-        modalButtonClicked = "update";
+        EditingActivityInfo.modalAction = "update";
         $( "#add-activity" ).submit();
     });
 
     $(".list-group").sortable(
         {
+            start: function(event, ui)
+            {
+                var sourceDayId = ui.item.parent().parent().attr("id");
+
+                ui.item.attr("source-day-id", sourceDayId);
+            },
             update: function(event, ui)
             {
-                var listGroup = ui.item.parent();
-                var count = 1;
-                var data = [];
-
-                $(listGroup).children().each(function()
+                if (this === ui.item.parent()[0]) // only call once for list to list moves
                 {
-                    var activity = { "id": $(this).data("index"), "order": count };
-                    
-                    ++count;
-
-                    data.push(activity);
-                });
-
-                $.ajax(
-                {
-                    url: "/calendar/updateorder",
-                    success: function(result)
+                    var sourceDayId = "#" + ui.item.attr("source-day-id");
+                    var targetDayId = "#" + ui.item.parent().parent().attr("id");
+                    var updateData = 
                     {
-                        $.each(result, function(index, element)
+                        "id": ui.item.attr("data-index"),
+                        "date": $(targetDayId).attr("date"),
+                        "time": ui.item.attr("data-time"),
+                        "activity": ui.item.attr("data-activity"),
+                        "targetId": targetDayId,
+                        "sourceId": sourceDayId,
+                        "ordering": []
+                    };
+
+                    populateOrdering(targetDayId, updateData.ordering);
+
+                    if (sourceDayId !== targetDayId)
+                    {
+                        populateOrdering(sourceDayId, updateData.ordering);
+                    }
+
+                    ui.item.removeAttr("source-day-id");
+
+                    ajaxActivity("/calendar/update", updateData, "Something went wrong trying reorder the activities. I'm sorry.", "json", function(result)
+                    {
+                        if (!result)
                         {
-                            var listItem = $(".list-group-item[data-index=" + element.id + "]");
-                            
-                            listItem.data("order", element.order);
+                            alert("I'm not sure if that worked. Sorry");
 
-                            listItem.parent().parent().find(".add-activity > .btn").data("order", parseInt(element.order) + 1);
-                        });     
-                    },
-                    error: function()
-                    {
-                        alert("Something went wrong trying reorder the activities. I'm sorry.");
+                            return;
+                        }
 
-                        listGroup.sortable("cancel"); // revert items to original position
-                    },
-                    method: 'POST',
-                    cache: false,
-                    data:
-                    {
-                        activities: data
-                    },
-                    dataType: 'json'
-                });
+                        $("#activity-" + result.id).highlight();
+                    });
+                }
             },
-            revert: true
-            //connectWith: ".list-group"
+            revert: true,
+            connectWith: ".list-group"
         }
     ).disableSelection();
 
@@ -324,7 +279,6 @@ $( document ).ready(function()
             url: "/calendar/get",
             success: function(result)
             {
-                //console.log(result);
                 buildCalendar($.parseHTML(result.trim()), dates);               
             },
             error: function()
@@ -342,6 +296,61 @@ $( document ).ready(function()
         }
     );
  });
+
+function populateOrdering(targetDayId, orderingArray, excludeId)
+{
+    if (excludeId === undefined)
+    {
+        excludeId = -1;
+    }
+
+    var order = 1;
+
+    $(targetDayId + " > .list-group").children().each(function(index, ele)
+    {
+        var activityId = $(this).data("index");
+
+        if (activityId !== excludeId)
+        {
+            orderingArray.push({ id: activityId, order: order });
+
+            ++order;
+        }
+    });
+}
+
+ function timeToString(time)
+ {
+     var timeStr = "";
+
+    if (time)
+    {
+        timeStr += "@ " + time;
+    }
+
+    return (timeStr);
+ }
+
+ function ajaxActivity(url, data, errorTxt, responseType, resultFunction)
+ {
+        $.ajax( // update in place, no re-ordering necessary
+        {
+            url: url,
+            success: resultFunction,
+            error: function()
+            {
+                alert(errorTxt);
+            },
+            method: 'POST',
+            cache: false,
+            data:
+            {
+                activityData: data
+            },
+            dataType: responseType
+        }
+    );
+ }
 
 function calcDates()
 {
@@ -372,28 +381,22 @@ function calcDates()
     return(dates);
 }
 
-function addActivityToListGroup(listGroup, index, when, timeFrame, time, activity, order, emph = false)
+function addActivityToListGroup(listGroup, index, time, activity, order, emph = false)
 {
-    var timeStr = (timeFrame === 'Any') ? "" : timeFrame;
-    var addBtn = $(listGroup).parent().find(".add-activity > .btn");
+    var timeStr = "";
+    var addBtn = $(listGroup).parent().find(".add-activity");
     var orderAsInt = parseInt(order);
-    var addBtnOrder = parseInt(addBtn.data("order"));
-
+    
     if (time)
     {
         timeStr += " @ " + time;
     }
 
-    if (addBtnOrder > orderAsInt)
-    {
-        orderAsInt = addBtnOrder;
-    }
+    var dataStr = 'id="activity-' + index + '" data-time="' + time + '" data-activity="' + activity + '" data-order="' + orderAsInt + '"';          
 
-    var dataStr = 'data-date="' + when + '" data-time-frame="' + timeFrame + '" data-time="' + time + '" data-activity="' + activity + '" data-order="' + orderAsInt + '"';          
-
-    $(listGroup).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>'); 
-
-    var addedItem = $(listGroup).find(".list-group-item[data-index=" + index + "]");
+    $(listGroup).append('<a href="#" class="list-group-item" data-toggle="modal" data-index="' + index + '" data-target="#activityModal" ' + dataStr + '><span class="label label-primary">' + timeStr + '</span> ' + activity + '</a>');
+    
+    var addedItem = $(listGroup).find("#activity-" + index);
 
     if (emph)
     {
@@ -428,33 +431,21 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
             }
 
             var listGroup = dayId + " > .list-group";
+            var dateAsStr = dateToString(dates[x]);
 
             $(dayId + " > .day-heading").append(dayAbbr + " " + dates[x].getDate());
-            $(listGroup).attr("id", dates[x].getFullYear() + "-" + (dates[x].getMonth() + 1) + "-" + dates[x].getDate());
-            $(dayId + " > .add-activity > .btn").attr("data-date",  dateToString(dates[x]));
-
-            if (dates[x].getTime() < today.getTime())
-            {
-                $(dayId).addClass("day-past");
-            }
+            $(dayId).attr("date", dateAsStr);
 
             dayCurrent(dates[x], today, dayId);
 
-            // if there's any activities for this day, add them here
-            var slashDate = dateToString(dates[x]);
-            var activities = dataHtml.find(".date[data-value='" + slashDate + "']");
+            var activities = dataHtml.find(".date[data-value='" + dateAsStr + "']");
 
             if (activities)
             {
-                //var count = 0;
                 activities.find(".activity").each(function(index)
                 {
-                    addActivityToListGroup(listGroup, $(this).data("id"), slashDate, $(this).data("time-frame"), $(this).data("time"), $(this).data("description"), $(this).data("order"));
-
-                    //++count;
+                    addActivityToListGroup(listGroup, $(this).data("id"), $(this).data("time"), $(this).data("description"), $(this).data("order"), true);
                 });
-
-                //$(dayId + " > .add-activity > .btn").attr("data-order",  count + 1);
             }
             
             if (dates[x].getDay() == 1) // 1 = Monday
@@ -473,6 +464,12 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
                 ++week;
             }
 
+            if (dates[x].getTime() < today.getTime())
+            {
+                $(dayId).addClass("day-past");
+                $(dayId).children().last().hide(); // takes out the add button
+            }
+
             ++x;
         }
  }
@@ -484,7 +481,6 @@ function addActivityToListGroup(listGroup, index, when, timeFrame, time, activit
          date.getDate() == today.getDate())
         {
             $(elementId + " > .day-heading").addClass("day-current");
-            $("#add-btn").attr("data-date", (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear());
         }
  }
 

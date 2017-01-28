@@ -88,22 +88,19 @@ class Activity extends CI_Model
 
 	public function add($activityData)
 	{
-		if (empty($activityData) || empty($activityData["when"]) || empty($activityData["user_email"]))
+		if (empty($activityData) || empty($activityData["date"]) || empty($activityData["user_email"]))
         {
 			$this->id = -1;
 
             return(FALSE);
         }
 
-		$when = $this->slashesToDashes($activityData["when"]);
-
 		$data = array("user_email" => $activityData["user_email"],
-					  "date" => $when,
+					  "date" => $this->slashesToDashes($activityData["date"]),
 					  "time" => $activityData["time"],
 					  "description" => $activityData["activity"],
-					  "time_frame" => $activityData["timeframe"],
-					  "rel_order" => $activityData["relorder"]
-					  );
+					  "rel_order" => $activityData["order"]
+	    			  );
 
         $this->db->insert("activity", $data);
 		$this->id = $this->db->insert_id();
@@ -113,42 +110,53 @@ class Activity extends CI_Model
 
 	public function update($activityData)
 	{
-		if (empty($activityData) || empty($activityData["id"]))
+		if (empty($activityData))
         {
-			$this->id = -1;
-
             return(FALSE);
         }
 
-		$current = $this->getById($activityData["id"]);
+		$this->db->trans_start();
 
-		if (count($current) == 0)
+		if (isset($activityData["id"]))
 		{
-			return(FALSE);
+			$current = $this->getById($activityData["id"]);
+
+			if (count($current) == 0)
+			{
+				return(FALSE);
+			}
+
+			$data = array("date" => $this->slashesToDashes($activityData["date"]),
+							"time" => $activityData["time"],
+							"description" => $activityData["activity"]
+							);
+
+			
+
+			$this->db->where("id", $activityData["id"]);
+			$this->db->update("activity", $data);
 		}
 
-		$data = array("date" => $this->slashesToDashes($activityData["when"]),
-					  "time" => $activityData["time"],
-					  "time_frame" => $activityData["timeframe"],
-					  "description" => $activityData["activity"]
-					  );
+		if (isset($activityData["ordering"]))
+		{
+			$this->updateorder($activityData["ordering"]);
+		}
 
-		$this->db->where("id", $activityData["id"]);
-		$this->db->update("activity", $data);
+		$this->db->trans_complete();
 
 		return (TRUE);
 	}
 
-	public function updateorder($activityData)
+	public function updateorder($activityOrdering)
 	{
-		if (empty($activityData))
+		if (empty($activityOrdering))
         {
             return(FALSE);
         }
 
 		$data = array();
 
-		foreach($activityData as $activity)
+		foreach($activityOrdering as $activity)
 		{
 			$this->db->where("id", $activity["id"]);
 			$this->db->update("activity", array("rel_order" => $activity["order"]));
@@ -157,14 +165,14 @@ class Activity extends CI_Model
 		return(TRUE);
 	}
 
-	public function delete($id)
+	public function delete($activityData)
 	{
-		if (empty($id))
+		if (empty($activityData) || !isset($activityData["id"]))
         {
-			$this->id = -1;
-
             return(FALSE);
         }
+
+		$id = $activityData["id"];
 
 		$current = $this->getById($id);
 
@@ -173,8 +181,17 @@ class Activity extends CI_Model
 			return(FALSE);
 		}
 
+		$this->db->trans_start();
+
 		$this->db->where("id", $id);
 		$this->db->delete("activity");
+
+		if (isset($activityData["ordering"]))
+		{
+			$this->updateorder($activityData["ordering"]);
+		}
+
+		$this->db->trans_complete();
 
 		return(TRUE);
 	}
