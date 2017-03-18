@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'aafywrggkcqk55.c72gc6ssepne.us-east-1.rds.amazonaws.com',
-	'username' => 'plannedon1972',
-	'password' => 'SexMAchine69',
+	'hostname' => 'aa68lce7ob3jry.c72gc6ssepne.us-east-1.rds.amazonaws.com',
+	'username' => 'aronx69',
+	'password' => 'BloodFart69!',
 	'database' => 'activityplanner',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
