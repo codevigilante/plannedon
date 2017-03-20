@@ -279,6 +279,7 @@ $( document ).ready(function()
             url: "/calendar/get",
             success: function(result)
             {
+                console.log(result);
                 buildCalendar($.parseHTML(result.trim()), dates);               
             },
             error: function()

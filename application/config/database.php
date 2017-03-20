@@ -75,7 +75,7 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'aa68lce7ob3jry.c72gc6ssepne.us-east-1.rds.amazonaws.com',
+	'hostname' => 'cv-db-cali.cibdqgcdn4pl.us-west-1.rds.amazonaws.com',
 	'username' => 'aronx69',
 	'password' => 'BloodFart69!',
 	'database' => 'activityplanner',
