@@ -1,0 +1,48 @@
+.list-group
+{
+    min-height:100px;
+}
+
+.day-past *
+{
+    color:#d1d1d1;
+}
+
+.day-past .badge
+{
+    background-color:#f1f1f1;
+}
+
+.list-group-item
+{
+    border:none;
+}
+
+.card-header
+{
+    background-color: white;
+}
+
+.day-today .card-header
+{
+    background-color: yellow;
+    font-weight: bold;
+}
+
+.activity-placeholder
+{
+    height: 100px;
+    background:papayawhip;
+}
+
+#2-28-2018
+{
+    border:1px solid red;
+}
+
+.badge-tag
+{
+    background-color:white;
+    color: #068415;
+    border:2px solid #06ad1a;
+}

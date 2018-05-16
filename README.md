@@ -6,7 +6,7 @@ Try it, at [plannedon.com](http://plannedon.com)
   
 ## Technology
 
-.NET Core
+.NET Core 2.0
 C#
 AWS Lambda, DynamoDB, API Gateway
 

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Planned On is a linear calendar app for smart people who need to stay organized.">
+        <meta name="author" content="plannedon.com">
+
+        <!-- Bootstrap core -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="../css/settings.css">
+        
+        <title>Settings - Planned On</title>
+    </head>
+
+    <body class="border-top border-primary">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom border-light">
+            <div class="container">
+                <a class="navbar-brand" href="calendar.html">Planned On</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item px-2">
+                            <button class="btn btn-outline-primary btn-md navbar-btn" role="button" onclick="location.href='./calendar.html';"><i class="material-icons align-middle">fast_rewind</i> Calendar</button>
+                        </li>
+                        <li class="nav-item px-2">
+                            <button class="btn btn-outline-primary btn-md navbar-btn" role="button" onclick="location.href='./login.html';"><i class="material-icons align-middle">exit_to_app</i> Sign out</button>
+                        </li>
+                    </ul>                    
+                </div>
+            </div>
+        </nav>
+        <!-- Banner -->
+        <div class="py-2 border-bottom border-light bg-primary">
+            <h3 class="text-white text-center">Settings</h3>
+        </div>
+        <!-- Settings -->
+        <div class="container mx-auto px-5 mt-1">
+            <nav>
+                <div class="nav nav-tabs" id="settings-tabs" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-membership-tab" data-toggle="tab" href="#nav-membership" role="tab" aria-controls="nav-membership" aria-selected="true">Membership</a>
+                    <a class="nav-item nav-link" id="nav-calendar-tab" data-toggle="tab" href="#nav-calendar" role="tab" aria-controls="nav-calendar" aria-selected="true">Calendar</a>
+                    <a class="nav-item nav-link" id="nav-security-tab" data-toggle="tab" href="#nav-security" role="tab" aria-controls="nav-security" aria-selected="true">Security</a>
+                    <a class="nav-item nav-link" id="nav-billing-tab" data-toggle="tab" href="#nav-billing" role="tab" aria-controls="nav-billing" aria-selected="true">Billing</a>
+                </div>
+            </nav>
+
+            <div class="tab-content" id="nav-settingsContent">
+                <!-- Membership -->
+                <div class="tab-pane fade show active" id="nav-membership" role="tabpanel" aria-labelledby="nav-membership-tab">
+                    <div class="card-deck mx-3 mt-4">
+                        <div class="card text-white bg-secondary h-100" style="max-width: 19rem;">                                
+                            <div class="card-body">
+                                <h1 class="card-title display-4 border-bottom border-light"><i class="material-icons md-36 text-light align-middle">check_circle</i> Basic</h1>
+                                <ul class="border-bottom border-light pb-3">
+                                    <li><b>Unlimited</b> activities</li>
+                                    <li><b>Private</b> calendar</li>
+                                    <li>Up to <b>5</b> tags</li>
+                                    <li><b>100% free</b>, forever</li>
+                                </ul>
+                                <a class="btn btn-success d-block disabled" href="#" role="button">Upgrade</a>
+                                <p class="text-center"><small><em>Upgrade-ability coming soon</em></small></p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title border-bottom border-light p-3 text-center bg-secondary text-white"><em>Member since June 2015</em></h5>
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3">
+                                        <p class="card-text"><b>Stats</b></p>
+                                    </div>
+                                    <div class="col-9">
+                                        <p><b>3,456</b> activities created</p>
+                                        <p>From <b>Mar 1, 2016</b> to <b>Dec 23, 2018</b></p>
+                                        <p><b>3</b> of 5 tags in use</p>
+                                    </div>
+                                </div>
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3">
+                                        <p class="card-text"><b>Email</b></p>
+                                    </div>
+                                    <div class="col-9">
+                                        <p>a_ronx@yahoo.com</p>
+                                    </div>
+                                </div>
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3"></div>
+                                    <div class="col-9">
+                                        <p><a role="button" class="btn btn-outline-danger btn-sm" href="#">Cancel Membership</a></p>
+                                        <p><small class="text-muted">Delete your Planned On membership and go away forever.</small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Calendar -->
+                <div class="tab-pane fade" id="nav-calendar" role="tabpanel" aria-labelledby="nav-calendar-tab">
+
+                    <div class="row mx-5 mt-4 px-5 pb-3 border-bottom border-light">
+                        <p class="col-2 font-weight-bold">Tags</p>
+                        <div class="col-10">
+                            <div class="d-flex w-100 border-bottom border-light pb-2">
+                                <h4 class=""><span class="badge badge-primary">A rather long tag name <span class="badge badge-light">67</span></span></h4>
+                                <button type="button" class="btn btn-outline-primary btn-sm ml-auto p-1"><i class="material-icons align-middle">create</i></button>
+                                <button type="button" class="btn btn-outline-danger btn-sm ml-3 p-1"><i class="material-icons align-middle">delete_forever</i></button>                                
+                            </div>
+                            <div class="d-flex w-100 border-bottom border-light py-2">
+                                <h4 class=""><span class="badge badge-success">Simple Tag <span class="badge badge-light">6758</span></span></h4>
+                                <button type="button" class="btn btn-outline-primary btn-sm ml-auto p-1"><i class="material-icons align-middle">create</i></button>
+                                <button type="button" class="btn btn-outline-danger btn-sm ml-3 p-1"><i class="material-icons align-middle">delete_forever</i></button>                                
+                            </div>
+                            <div class="d-flex w-100 border-bottom border-light py-2">
+                                <h4 class=""><span class="badge badge-danger">Hello <span class="badge badge-light">31</span></span></h4>
+                                <button type="button" class="btn btn-outline-primary btn-sm ml-auto p-1"><i class="material-icons align-middle">create</i></button>
+                                <button type="button" class="btn btn-outline-danger btn-sm ml-3 p-1"><i class="material-icons align-middle">delete_forever</i></button>                                
+                            </div>
+                            <div class="d-flex w-100 border-bottom border-light py-2">
+                                <p class="card-text text-muted"><b>3</b> of 5 tags in use</p>
+                                <button type="button" class="btn btn-primary ml-auto"><i class="material-icons align-middle">create</i> Create</button>                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- Security -->
+                <div class="tab-pane fade" id="nav-security" role="tabpanel" aria-labelledby="nav-security-tab">
+                    <div class="card-deck mx-3 mt-4">
+                        <div class="card bg-light mb-3 h-100" style="max-width: 19rem;">
+                            <div class="card-body">
+                                <h5 class="card-title">No Passwords</h5>
+                                <p class="card-text">No password is required to sign in to your calendar.</p>
+                                <p class="card-text">Instead, a temporary, random code is sent to your email each time you need to log in (which shouldn't be that frequently if you're using Planned On to its fullest capacity).</p>
+                                <p class="card-text">This way, you don't have to remember a stupid password or any other nonsense to get in to your calendar.</p>
+                                <p class="card-text">And, as long as you're the only one with access to your email, it's more secure.</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3">
+                                        <p class="card-text"><b>Passphrase</b></p>
+                                    </div>
+                                    <div class="col-9">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" value="csdarfgvASDFwaerqawef34tq354hw4rtHNWRetbqerbqeRb">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-primary" type="button"><i class="material-icons align-middle">lock_outline</i> Set</button>
+                                            </div>                                            
+                                        </div>
+                                        <p><small class="form-text text-muted">Set a custom passphrase to further secure your account. The longer, the better. <em>You'll never have to enter this to sign in</em>.</small></p>
+                                    </div>
+                                </div>
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3">
+                                        <p class="card-text"><b>Devices</b></p>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="card-text text-muted">Devices that have access to your calendar</p>
+                                        <div class="row border-bottom border-top border-light py-2">
+                                            <div class="col-9">
+                                                <p class="p-0 m-0">A-ron Talk Thing</p>
+                                                <p><small class="text-muted"><em>Last access on March 12, 2018 @ 1904</em></small></p>
+                                            </div>
+                                            <div class="col-3">
+                                                <button type="button" class="btn btn-outline-danger btn-sm float-right">Revoke</button>
+                                            </div>                                
+                                        </div>
+                                        <div class="row border-bottom border-top border-light py-2">
+                                            <div class="col-9">
+                                                <p class="p-0 m-0">Mama's Laptop Extraordinary</p>
+                                                <p><small class="text-muted"><em>Last access on March 9, 2018 @ 1009</em></small></p>
+                                            </div>
+                                            <div class="col-3">
+                                                <button type="button" class="btn btn-outline-danger btn-sm float-right">Revoke</button>
+                                            </div>                                
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row border-bottom border-light py-3">
+                                    <div class="col-3">
+                                        <p class=""><b>Access History</b></p>
+                                    </div>
+                                    <div class="col-9">
+                                        <p class="text-muted">Last 20 calendar accesses</p>
+                                        <table class="table">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th scope="col"><small>Source</small></th>
+                                                    <th scope="col"><small>Accessed</small></th>
+                                                    <th scope="col"><small>IP Address</small></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><em>Planned On Web</em></td>
+                                                    <td>March 12, 2018</td>
+                                                    <td>192.168.0.100</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><em>Planned On iPhone</em></td>
+                                                    <td>March 11, 2018</td>
+                                                    <td>192.168.0.78</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Billing -->
+                <div class="tab-pane fade" id="nav-billing" role="tabpanel" aria-labelledby="nav-billing-tab">
+                    <p class="mx-5 mt-4 px-5 pb-3 border-bottom border-light text-muted"><em>Nothing to show, you're a Basic member</em>.</p>
+                </div>
+            </div>
+        </div>        
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
+            (function() 
+            {
+                'use strict';
+
+                window.addEventListener('load', function() 
+                {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) 
+                    {
+                        form.addEventListener('submit', function(event) 
+                        {
+                            if (form.checkValidity() === false) 
+                            {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+    </body>
+
+</html>

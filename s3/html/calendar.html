@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap core -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+        <!-- Custom styles things -->
+        <link href="../css/calendar.css" rel="stylesheet">
+        
+        <title>v0.5 Calendar</title>
+    </head>
+    <body id="plannedon-calendar">
+        <!-- Activity Editor -->
+        <div class="modal fade" id="activityEditorModal" tabindex="-1" role="dialog" aria-labelledby="activityEditorLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Activity Editor</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="activity-editor">
+                            <!-- Date -->
+                            <div class="input-group input-group-sm position-relative mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="material-icons">&#xE878;</i></span>
+                                </div>
+                                <input type="text" placeholder="Date" name="when" class="form-control form-control-sm editable" id="editor-date" aria-describedby="inputGroup-sizing-sm" aria-label="Large" required>
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="material-icons">&#xE8B5;</i></span>
+                                </div>
+                                <input type="text" placeholder="Time Tag" class="form-control form-control-sm" id="editor-time-tag" aria-describedby="inputGroup-sizing-sm" aria-label="Large" require>
+                            </div>                                
+                            <!-- Activity -->
+                            <div class="input-group input-group-lg position-relative mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="material-icons">&#xE53F;</i></span>
+                                </div>
+                                <input type="text" placeholder="Activity" class="form-control form-control-lg" id="editor-activity" aria-describedby="inputGroup-sizing-sm" aria-label="Large" require>
+                            </div>
+                            <!-- Notes -->
+                            <div class="input-group input-group-lg position-relative mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="material-icons">&#xE8D2;</i></span>
+                                </div>
+                                <input type="text" placeholder="Notes" class="form-control form-control-lg" id="editor-activity-notes" aria-describedby="inputGroup-sizing-sm" aria-label="Large" require>
+                            </div>
+                            <!-- Activity Label -->
+                            <div class="input-group input-group-lg position-relative mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm"><i class="material-icons">label</i></span>
+                                </div>
+                                <input type="text" class="form-control" aria-label="tag input" placeholder="Label" id="editor-activity-tag">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="activity-tag-selection"></button>
+                                    <div class="dropdown-menu" id="activity-tags">
+                                        <a class="dropdown-item tag-name" href="#">Eat</a>
+                                        <a class="dropdown-item tag-name" href="#">Train</a>
+                                        <a class="dropdown-item tag-name" href="#">Create</a>
+                                        <a class="dropdown-item tag-name" href="#">Live</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer d-flex w-100">
+                        <button type="button" class="btn btn-danger mr-auto" id="delete-activity" data-dismiss="modal">Delete</button>
+                        <button type="button" class="btn btn-outline-secondary" id="abort-activity" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="add-activity" data-dismiss="modal">Add</button>
+                        <button type="button" class="btn btn-primary" id="update-activity" data-dismiss="modal">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Activity Editor -->
+
+        <!-- Day of the week sticky markers -->
+        <div class="card-group sticky-top text-muted">
+            <div class="card">
+                <div class="card-header text-center p-0 day-1">Mon</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-2">Tue</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-3">Wed</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-4">Thu</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-5">Fri</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-6">Sat</div>
+            </div>
+            <div class="card">
+                <div class="card-header text-center p-0 day-0">Sun</div>
+            </div>
+        </div>
+        <!-- end day of the week markers -->
+
+        <!-- Activity Calendar placeholders -->
+        <div id="past-weeks" data-weeks="0"></div>
+        <div id="current-calendar" data-weeks="1"></div>
+        <div id="extra-weeks" data-weeks="0"></div>
+        <!-- end Activity Calendar -->
+
+        <div class="d-flex w-100 justify-content-center p-1 mt-4">
+            <button role="button" class="btn btn-outline-secondary px-2"  data-tooltip="show" data-placement="top" title="Settings" data-delay='{"show":"1000", "hide":"100"}' onclick="location.href='./settings.html';"><i class="material-icons align-middle">settings</i></button>  
+            <button type="button" class="btn btn-outline-secondary unlock-date mx-5 px-5" id="future-add-activity" data-toggle="modal" data-target="#activityEditorModal" data-tooltip="show" data-placement="top" title="Add new activity" data-delay='{"show":"1000", "hide":"100"}'><i class="material-icons align-middle">&#xE03B;</i></button>
+            <button type="button" class="btn btn-outline-secondary px-2"  data-tooltip="show" data-placement="top" title="Next 2 weeks" data-delay='{"show":"1000", "hide":"100"}'><i class="material-icons align-middle">fast_forward</i></button>            
+        </div>
+
+        <!-- zee codes  -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="../js/calendar.js"></script>
+    </body>
+    <!-- goodbye -->
+</html>

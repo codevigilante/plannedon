@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Planned On is a linear calendar app for smart people who need to stay organized.">
+        <meta name="author" content="plannedon.com">
+
+        <!-- Bootstrap core -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <!-- Custom styles things -->
+        <link href="../css/login.css" rel="stylesheet">
+        
+        <title>Login - Planned On</title>
+    </head>
+
+    <body class="border-top border-primary">
+        <h1 class="display-4 text-muted text-center pt-2">Planned On</h1>
+        <h1 class="h3 font-weight-normal text-center mt-3 pb-3 mb-5 pb-5">Sign in</h1>
+        <div class="container pt-5">
+            <div class="row">
+                <div class="col-sm">
+                    <h1 class="h5 text-center text-success pb-3 border-bottom border-success">1. Identify &#10004;</h1>
+                </div>
+                <div class="col-sm">
+                    <h1 class="h5 font-weight-normal text-center pb-3 border-bottom border-dark">2. Validate</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <form method="POST" action="token.html" class="needs-validation mt-2 pt-4" novalidate>
+                <div class="input-group input-group-lg position-relative">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-lg">Code</span>
+                    </div>
+                    <input type="code" class="form-control form-control-lg" id="code" aria-describedby="inputGroup-sizing-sm" aria-label="Large" required>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary" type="submit">Validate</button>
+                    </div>
+                    <div class="valid-tooltip">Looks good</div>
+                    <div class="invalid-tooltip">Please enter the code in your email</div>
+                </div>
+            </form>
+            <div class="alert alert-info mt-5" role="alert">
+                Check your email! You were sent a code that you need to enter to complete sign in. This code will expire in 5 minutes.
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <script>
+            (function() 
+            {
+                'use strict';
+
+                window.addEventListener('load', function() 
+                {
+                    var forms = document.getElementsByClassName('needs-validation');
+                    var validation = Array.prototype.filter.call(forms, function(form) 
+                    {
+                        form.addEventListener('submit', function(event) 
+                        {
+                            if (form.checkValidity() === false) 
+                            {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+
+                            form.classList.add('was-validated');
+                        }, false);
+                    });
+                }, false);
+            })();
+        </script>
+    </body>
+
+</html>
