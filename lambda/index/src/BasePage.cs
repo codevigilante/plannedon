@@ -23,10 +23,10 @@ namespace PlannedOnIndex
 
             foreach(KeyValuePair<string, SillyPage> navItem in NavItems)
             {
-                navPages.AddItem(new SillyListItem(string.Empty)
-                {
-                    { "pageName", new SillyTextWidget("pageName", navItem.Key) }
-                });
+                SillyListItem item = new SillyListItem();
+
+                item.Bind(new SillyTextWidget("pageName", navItem.Key));
+                navPages.AddItem(item);
             }
 
             Bind(navPages);

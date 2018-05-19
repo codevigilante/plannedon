@@ -5,19 +5,15 @@ using System.Collections.Generic;
 
 namespace SillyWidgets
 {
-    public class SillyListItem : Dictionary<string, SillyWidget>
+    public class SillyListItem : SillyWidget
     {
-        public SillyListItem(string id)
+        public SillyListItem()
+            : base(string.Empty, SillyType.ListItem)
         {
-            /*Flavor = new SillyFlavor()
-            {
-                Type = SillyFlavor.SillyType.ListItem,
-                Namespace = SillyFlavor.SillyNamespace.silly,
-                Key = id
-            };*/
+            SupportedTargets = SillyTargets.None;
         }
 
-        public bool Resolve(XElement node)
+        protected override bool Resolve(XElement element, SillyTargets target)
         {
             return(false);
         }
@@ -26,11 +22,22 @@ namespace SillyWidgets
     public class SillyListWidget : SillyWidget
     {
         public List<SillyListItem> Items { get; private set; }
+        public override string Html
+        {
+            get
+            {
+                return(Render(Root));
+            }
+        }
+
+        private XElement Root = null;
+        private SillyTargets Target = SillyTargets.Unknown;
 
         public SillyListWidget(string id)
             : base(id, SillyType.List)
         {
             Items = new List<SillyListItem>();
+            ElementName = "SillyList";
         }
 
         public void AddItem(SillyListItem item)
@@ -38,14 +45,28 @@ namespace SillyWidgets
             Items.Add(item);
         }
 
+        protected override string Render(XElement root)
+        {
+            if (Target == SillyTargets.Attribute)
+            {
+                // render the element
+                // render the list items
+                // render close element
+            }
+            return(string.Empty);
+        }
+
         protected override bool Resolve(XElement node, SillyTargets target)
         {
-            // validate the node's flavor matches this flavor
-            // foreach item that's been added:
-            //   call the item's resolve passing in all the child elements of node
-            Console.WriteLine("SillyList");
+            if (node == null)
+            {
+                return(false);
+            }
+
+            Root = node;
+            Target = target;
             
-            return(false);
+            return(true);
         }
     }
 }

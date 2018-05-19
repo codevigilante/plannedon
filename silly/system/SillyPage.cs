@@ -18,7 +18,7 @@ namespace SillyWidgets
             {
                 if (String.IsNullOrEmpty(_content))
                 {
-                    return(Render());
+                    return(base.Html);
                 }
 
                 return(_content);

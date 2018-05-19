@@ -8,7 +8,7 @@ using System.Text;
 
 namespace SillyWidgets
 {
-    public enum BindResult { Success, NotFound, InvalidWidget, NoDocument, AlreadyExists }
+    public enum BindResult { Success, NotFound, InvalidWidget, AlreadyExists }
 
     public class SillyWidget
     {
@@ -16,10 +16,9 @@ namespace SillyWidgets
         private static string ElementAttributeName = "key";
 
         public string Key { get; private set; }
-        public XDocument Document { get; protected set; }
-        public enum SillyType { Text, List, Widget, Page, What }
+        public enum SillyType { Text, List, ListItem, Widget, Page, What }
         [Flags]
-        public enum SillyTargets { Element, Attribute, Unknown }
+        public enum SillyTargets { Element, Attribute, Unknown, None }
         public SillyType Type { get; private set; }
 
         public string ElementName { get; protected set; }
@@ -28,10 +27,17 @@ namespace SillyWidgets
         { 
             get
             {
-                return(Render());
+                if (Document == null)
+                {
+                    return(string.Empty);
+                }
+
+                return(Render(Document.Root));
             }
             set {} 
         }
+
+        protected XDocument Document { get; set; }
 
         // WidgetElementName -> { key, Widget }, { key, Widget }, ...
         // "silly-key" -> { key, Widget }, ...
@@ -47,16 +53,11 @@ namespace SillyWidgets
             SupportedTargets = SillyTargets.Attribute | SillyTargets.Element;
         }
 
-        public BindResult Bind(SillyWidget widget)
+        public virtual BindResult Bind(SillyWidget widget)
         {     
             if (widget == null)
             {
                 return (BindResult.InvalidWidget);
-            }
-
-            if (Document == null)
-            {
-                return (BindResult.NoDocument);
             }
 
             if ((widget.SupportedTargets & SillyTargets.Element) == SillyTargets.Element)
@@ -108,16 +109,16 @@ namespace SillyWidgets
             return(true);
         }
 
-        protected virtual string Render()
+        protected virtual string Render(XElement root)
         {
-            if (Document == null || Document.Root == null)
+            if (root == null)
             {
                 return(string.Empty);
             }
 
             Content.Clear();
             Nodes.Clear();
-            Nodes.Push(Document.Root);
+            Nodes.Push(root);
 
             while(Nodes.Count > 0)
             {
@@ -156,24 +157,10 @@ namespace SillyWidgets
 
                 if (renderWidget)
                 {
-                    switch(target)
-                    {
-                        case SillyTargets.Element:
-                            Content.Append(widget.Html);
-                            break;
-                        case SillyTargets.Attribute:
-                            // render element
-                            Content.Append(widget.Html);
-                            // render close tag
-                            break;
-                        default:
-                            Content.Append("This is an error, somehow, not sure how it can happen.");
-                            break;
-                    }
                     Content.Append(widget.Html);
-                }
 
-                return;
+                    return;
+                }
             }
 
             if (!String.IsNullOrEmpty(element.Attribute("silly-exit")?.Value))
@@ -259,13 +246,13 @@ namespace SillyWidgets
             string widgetKey = string.Empty;
 
             if (BoundWidgets.TryGetValue(element.Name.ToString(), out matchingWidgets))
-            {                
-                widgetKey = element.Attribute(ElementAttributeName).Value;
+            {      
+                widgetKey = element.Attribute(ElementAttributeName)?.Value;
                 target = SillyTargets.Element;
             }
             else if (BoundWidgets.TryGetValue(AttributeName, out matchingWidgets))
             {
-                widgetKey = element.Attribute(AttributeName).Value;
+                widgetKey = element.Attribute(AttributeName)?.Value;
                 target = SillyTargets.Attribute;
             }
             else
