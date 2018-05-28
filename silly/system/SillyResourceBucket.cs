@@ -25,25 +25,41 @@ namespace SillyWidgets
                     // we really only want to look at resources that are under WWWRoot
                     if (resource.EndsWith("shtml", StringComparison.OrdinalIgnoreCase))
                     {
-                        XDocument doc = XDocument.Load(resourceStream);                        
-                        string typeName = doc.Root.Attribute("page")?.Value;
-
-                        if (String.IsNullOrEmpty(typeName))
+                        XDocument doc = XDocument.Load(resourceStream);        
+                        
+                        if (!TryAddToCache("page", doc, resource))
                         {
-                            throw new SillyException(SillyHttpStatusCode.ServerError, "shtml 'page' must be specified on root html element in '" + resource + "'.");
+                            if (!TryAddToCache("widget", doc, resource))
+                            {
+                                throw new SillyException(SillyHttpStatusCode.ServerError, "shtml attribute 'page' or 'widget' must be specified on root html element in '" + resource + "'.");
+                            }
                         }
 
-                        if (!ShtmlCache.ContainsKey(typeName))
-                        {
-                            ShtmlCache.Add(typeName, new SillyResourceInfo(resource, doc));
-                        }
-                        else
-                        {
-                            throw new SillyException(SillyHttpStatusCode.ServerError, "Duplicate shtml types detected: '" + typeName + " -> " + resource + "'. shtml types must be unique.");
-                        }
+                        Console.WriteLine("Added resource: " + resource);
                     }
                 }
             }
+        }
+
+        private static bool TryAddToCache(string attr, XDocument doc, string resource)
+        {
+            string key = doc.Root.Attribute(attr)?.Value;
+
+            if (String.IsNullOrEmpty(key))
+            {
+                return(false);
+            }
+
+            if (!ShtmlCache.ContainsKey(key))
+            {
+                ShtmlCache.Add(key, new SillyResourceInfo(resource, doc));
+            }
+            else
+            {
+                throw new SillyException(SillyHttpStatusCode.ServerError, "Duplicate shtml types detected: '" + key + " -> " + resource + "'. shtml types must be unique.");
+            }
+
+            return(true);
         }
 
         public static bool FetchAllInherited(string derivedKey, out Stack<SillyResourceInfo> resources)

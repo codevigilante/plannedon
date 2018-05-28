@@ -8,20 +8,20 @@ using System.Text;
 
 namespace SillyWidgets
 {
-    public enum BindResult { Success, NotFound, InvalidWidget, AlreadyExists }
+    public enum BindResult { Success, InvalidWidget }
+    public enum SillyOptions { SilenceErrors, ShowErrors }
 
     public class SillyWidget
     {
-        private static string AttributeName = "silly-key";
-        private static string ElementAttributeName = "key";
+        private static string AttributeKey = "silly-key";
+        private static string ExitingAttribute = "silly-exit";
+        private static string ElementKey = "key";
 
         public string Key { get; private set; }
         public enum SillyType { Text, List, ListItem, Widget, Page, What }
         [Flags]
-        public enum SillyTargets { Element, Attribute, Unknown, None }
+        public enum SillyTargets { Element = 1, Attribute = 2, Unknown = 4, None = 8 }
         public SillyType Type { get; private set; }
-
-        public string ElementName { get; protected set; }
         public SillyTargets SupportedTargets { get; protected set; }
         public virtual string Html
         { 
@@ -32,84 +32,103 @@ namespace SillyWidgets
                     return(string.Empty);
                 }
 
-                return(Render(Document.Root));
+                string html = Render(Document.Root, IsSilly(Document.Root.Name.ToString()));
+
+                return(GetFormattedErrors() + html);
             }
             set {} 
         }
+        public List<string> ErrorCollection { get; private set; }
+        public SillyOptions Options { get; set; }
 
         protected XDocument Document { get; set; }
+        protected string ElementName { get; set; }
+        protected StringBuilder Content { get; private set; }
 
-        // WidgetElementName -> { key, Widget }, { key, Widget }, ...
-        // "silly-key" -> { key, Widget }, ...
-        private Dictionary<string, SillyBindMap> BoundWidgets = new Dictionary<string, SillyBindMap>();
-        private StringBuilder Content = new StringBuilder();
+        private SillyBindMap BoundWidgets = new SillyBindMap();
+        private StringBuilder Errors = new StringBuilder();
+        private string ErrorTemplate = "<li style=\"color:red;border:1px solid red;padding:5px;\"><b>ERROR</b>: {0}</li>";
         private Stack<XNode> Nodes = new Stack<XNode>();
 
         public SillyWidget(string id, SillyType type = SillyType.Widget)
         {
             Key = id;
             Type = type;
-            ElementName = "SillyWidget";
             SupportedTargets = SillyTargets.Attribute | SillyTargets.Element;
+            ErrorCollection = new List<string>();
+            Options = SillyOptions.ShowErrors;
+            ElementName = "silly";
+            Content = new StringBuilder();
         }
 
         public virtual BindResult Bind(SillyWidget widget)
         {     
-            if (widget == null)
+            if (widget == null || String.IsNullOrEmpty(widget.Key))
             {
                 return (BindResult.InvalidWidget);
             }
 
-            if ((widget.SupportedTargets & SillyTargets.Element) == SillyTargets.Element)
-            {
-                AddToBound(widget.ElementName, widget);
-            }
-
-            if ((widget.SupportedTargets & SillyTargets.Attribute) == SillyTargets.Attribute)
-            {
-                AddToBound(AttributeName, widget);
-            }
+            BoundWidgets[widget.Key] = widget;
 
             return(BindResult.Success);
         }
 
-        private void AddToBound(string outerKey, SillyWidget widget)
+        public string GetFormattedErrors()
         {
-            SillyBindMap bindVals = null;
-
-            if (!BoundWidgets.TryGetValue(outerKey, out bindVals))
+            if (ErrorCollection.Count == 0 || Options == SillyOptions.SilenceErrors)
             {
-                bindVals = new SillyBindMap();
-                BoundWidgets.Add(outerKey, bindVals);
+                return(string.Empty);
             }
 
-            bindVals[widget.Key] = widget;
+            Errors.Clear();
+            Errors.Append("<ul>");
+
+            foreach(string err in ErrorCollection)
+            {
+                Errors.Append(String.Format(ErrorTemplate, err));
+            }
+
+            Errors.Append("</ul>");
+
+            return(Errors.ToString());
         }
 
-        protected virtual bool Resolve(XElement element, SillyTargets target)
+        protected virtual bool Accept(XElement element)
         {
             if (element == null)
             {
                 return(false);
             }
 
-            if (Document == null ||
-                Document.Root.Attribute("id") != element.Attribute("id"))
+            if (Document != null)
             {
-                // Document = SillyResourceBucket.FetchWidget(element.Attribute("id"));
+                return(true);
             }
-            // else if (Document.Root.Attribute("id") != element.Attribute("id"))
-            //{
-                // Document 
 
-            //}
+            string widget = element.Attribute("widget")?.Value;
 
-            // do whatever a widget needs to do to resolve
+            if (String.IsNullOrEmpty(widget))
+            {
+                ErrorCollection.Add("Widget '" + Key + "' must declare a 'widget' attribute naming a valid widget.");
+
+                return(false);
+            }
+
+            SillyResourceInfo info = null;
+
+            if (SillyResourceBucket.Fetch(widget, out info))
+            {
+                Document = info.ShtmlDoc;
+            }
+            else
+            {
+                ErrorCollection.Add("No widget found matching '" + widget + "' at key '" + Key + "'");
+            }
 
             return(true);
         }
 
-        protected virtual string Render(XElement root)
+        protected virtual string Render(XElement root, bool skipRoot = false)
         {
             if (root == null)
             {
@@ -117,8 +136,17 @@ namespace SillyWidgets
             }
 
             Content.Clear();
+            ErrorCollection.Clear();
             Nodes.Clear();
-            Nodes.Push(root);
+
+            if (skipRoot)
+            {
+                PushElementChildren(root);
+            }
+            else
+            {
+                Nodes.Push(root);
+            }
 
             while(Nodes.Count > 0)
             {
@@ -148,84 +176,97 @@ namespace SillyWidgets
                 return;
             }
 
-            SillyWidget widget = null;
-            SillyTargets target;
-
-            if (TryMatchWidget(element, out widget, out target))
+            if (!String.IsNullOrEmpty(element.Attribute(ExitingAttribute)?.Value))
             {
-                bool renderWidget = widget.Resolve(element, target);
+                element.SetAttributeValue(ExitingAttribute, null);
 
-                if (renderWidget)
-                {
-                    Content.Append(widget.Html);
+                CloseElement(element);
+            }
+            else            
+            {
+                XText widgetContent = null;
+                bool renderElement = true;
+
+                if (TryGetWidget(element, out widgetContent, out renderElement))
+                {                    
+                    if (renderElement)
+                    {
+                        OpenElement(element);
+                        element.SetAttributeValue("silly-exit", 1);
+                        Nodes.Push(element);
+                    }
+
+                    Nodes.Push(widgetContent);
 
                     return;
-                }
-            }
-
-            if (!String.IsNullOrEmpty(element.Attribute("silly-exit")?.Value))
-            {
-                element.SetAttributeValue("silly-exit", null);
-
-                Content.Append("</");
-                Content.Append(element.Name);
-                Content.Append(">");
-            }
-            else
-            {
-                string lowerName = element.Name.ToString().ToLower();
-
-                Content.Append("<");
-                Content.Append(lowerName);
-                
-                if (element.HasAttributes)
-                {
-                    Content.Append(" ");
-
-                    foreach(XAttribute attr in element.Attributes())
-                    {
-                        Content.Append(attr.ToString());
-
-                        if (attr != element.LastAttribute)
-                        {
-                            Content.Append(" ");
-                        }
-                    }
                 }
 
                 if (element.LastNode != null)
                 {
-                    Content.Append(">");
+                    OpenElement(element);
+
                     element.SetAttributeValue("silly-exit", 1);
                     Nodes.Push(element);
 
-                    XNode child = element.LastNode;
-
-                    while (child != null)
-                    {
-                        Nodes.Push(child);
-                        child = child.PreviousNode;
-                    }
+                    PushElementChildren(element);
                 }
                 else
                 {
-                    switch(lowerName)
+                    switch(element.Name.ToString().ToLower())
                     {
                         case "meta":
                         case "link":
                         case "span":
-                            Content.Append(">");
+                            OpenElement(element);
                             break;
                         case "script":
-                            Content.Append("></script>");
+                            OpenElement(element);
+                            Content.Append("</script>");
                             break;
                         default:
-                            Content.Append(" />");
+                            OpenElement(element, true);
                             break;
                     }
                 }
             }
         } 
+
+        private void OpenElement(XElement element, bool selfClose = false)
+        {
+            Content.Append("<");
+            Content.Append(element.Name);
+                
+            if (element.HasAttributes)
+            {
+                Content.Append(" ");
+
+                foreach(XAttribute attr in element.Attributes())
+                {
+                    Content.Append(attr.ToString());
+
+                    if (attr != element.LastAttribute)
+                    {
+                        Content.Append(" ");
+                    }
+                }
+            }
+
+            if (selfClose)
+            {
+                Content.Append(" />");
+            }
+            else
+            {
+                Content.Append(">");
+            }
+        }
+
+        private void CloseElement(XElement element)
+        {
+            Content.Append("</");
+            Content.Append(element.Name);
+            Content.Append(">");
+        }
 
         private void RenderText(XText text)
         {
@@ -237,35 +278,69 @@ namespace SillyWidgets
             Content.Append(text.Value);
         }
 
-        private bool TryMatchWidget(XElement element, out SillyWidget widget, out SillyTargets target)
+        private bool TryGetWidget(XElement element, out XText widgetContent, out bool renderElement)
         {
-            widget = null;
-            target = SillyTargets.Unknown;
+            widgetContent = null;
+            renderElement = true;
 
-            SillyBindMap matchingWidgets = null;
-            string widgetKey = string.Empty;
+            bool isElementWidget = false;
+            string keyName = string.Empty;
+            string keyValue = null;
 
-            if (BoundWidgets.TryGetValue(element.Name.ToString(), out matchingWidgets))
-            {      
-                widgetKey = element.Attribute(ElementAttributeName)?.Value;
-                target = SillyTargets.Element;
-            }
-            else if (BoundWidgets.TryGetValue(AttributeName, out matchingWidgets))
+            if (IsSilly(element.Name.ToString()))
             {
-                widgetKey = element.Attribute(AttributeName)?.Value;
-                target = SillyTargets.Attribute;
+                isElementWidget = true;
+                keyName = ElementKey;
             }
             else
             {
-                return(false);
+                keyName = AttributeKey;
             }
 
-            if (String.IsNullOrEmpty(widgetKey))
+            keyValue = element.Attribute(keyName)?.Value;
+
+            if (keyValue == null)
             {
-                return(false);
+                return (false);
             }
 
-            return(matchingWidgets.TryGetValue(widgetKey, out widget));
+            SillyWidget widget = null;
+
+            if (BoundWidgets.TryGetValue(keyValue, out widget))
+            {
+                bool accepted = widget.Accept(element);
+
+                if (!accepted)
+                {
+                    ErrorCollection.Add("Cannot bind " + widget.GetType().Name + " to key '" + keyValue + "'");
+
+                    return(false);
+                }
+
+                widgetContent = new XText(widget.Html);
+                renderElement = !isElementWidget;
+                ErrorCollection.AddRange(widget.ErrorCollection);
+
+                return(true);
+            }
+
+            return(false);
+        }
+
+        private bool IsSilly(string elementName)
+        {
+            return(String.Compare(elementName, ElementName, false) == 0);
+        }
+
+        private void PushElementChildren(XElement element)
+        {
+            XNode child = element.LastNode;
+
+            while (child != null)
+            {
+                Nodes.Push(child);
+                child = child.PreviousNode;
+            }
         }
     }
 }

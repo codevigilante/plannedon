@@ -1,21 +1,49 @@
 using System;
 using System.Text;
 using System.Xml.Linq;
+using System.Xml;
 using System.Collections.Generic;
 
 namespace SillyWidgets
 {
     public class SillyListItem : SillyWidget
     {
+        public override string Html
+        {
+            get
+            {
+                if (Target == null)
+                {
+                    return(string.Empty);
+                }
+
+                return(base.Render(Target, true));
+            }
+        }
+
+        private XElement Target = null;
+
         public SillyListItem()
             : base(string.Empty, SillyType.ListItem)
         {
             SupportedTargets = SillyTargets.None;
         }
 
-        protected override bool Resolve(XElement element, SillyTargets target)
+        protected override bool Accept(XElement element)
         {
-            return(false);
+            if (element == null)
+            {
+                return(false);
+            }
+
+            Target = element;
+            
+            return(true);
+        }
+
+        public bool AcceptPublic(XElement element)
+        {
+            return(Accept(element));
         }
     }
 
@@ -26,18 +54,39 @@ namespace SillyWidgets
         {
             get
             {
-                return(Render(Root));
+                if (Target == null)
+                {
+                    return(string.Empty);
+                }
+
+                Content.Clear();
+                ErrorCollection.Clear();
+
+                foreach(SillyListItem item in Items)
+                {
+                    bool accepted = item.AcceptPublic(Target);
+
+                    if (!accepted)
+                    {
+                        ErrorCollection.Add("Cannot bind list item in silly list '" + Key + "'");
+
+                        continue;
+                    }
+
+                    Content.Append(item.Html);
+                    ErrorCollection.AddRange(item.ErrorCollection);
+                }
+
+                return(Content.ToString());
             }
         }
 
-        private XElement Root = null;
-        private SillyTargets Target = SillyTargets.Unknown;
+        private XElement Target = null;
 
         public SillyListWidget(string id)
             : base(id, SillyType.List)
         {
             Items = new List<SillyListItem>();
-            ElementName = "SillyList";
         }
 
         public void AddItem(SillyListItem item)
@@ -45,26 +94,14 @@ namespace SillyWidgets
             Items.Add(item);
         }
 
-        protected override string Render(XElement root)
-        {
-            if (Target == SillyTargets.Attribute)
-            {
-                // render the element
-                // render the list items
-                // render close element
-            }
-            return(string.Empty);
-        }
-
-        protected override bool Resolve(XElement node, SillyTargets target)
+        protected override bool Accept(XElement node)
         {
             if (node == null)
             {
                 return(false);
             }
 
-            Root = node;
-            Target = target;
+            Target = node;
             
             return(true);
         }

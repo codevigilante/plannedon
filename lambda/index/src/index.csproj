@@ -19,6 +19,7 @@
     <EmbeddedResource Include="wwwroot\base.shtml" />
     <EmbeddedResource Include="wwwroot\index.shtml" />
     <EmbeddedResource Include="wwwroot\learn.shtml" />
+    <EmbeddedResource Include="wwwroot\experiment.shtml" />
   </ItemGroup>
 
   <ItemGroup>

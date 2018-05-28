@@ -5,19 +5,41 @@ namespace SillyWidgets
 {
     public class SillyTextWidget : SillyWidget
     {
+        public override string Html
+        {
+            get
+            {
+                return(Text);
+            }
+        }
         public string Text { get; private set; }
 
         public SillyTextWidget(string id, string text)
             : base(id, SillyType.Text)
         {
-            Text = text;
+            if (text == null)
+            {
+                Text = string.Empty;
+            }
+            else
+            {
+                Text = text;
+            }
         }
 
-        protected override bool Resolve(XElement node, SillyTargets target)
+        protected override bool Accept(XElement node)
         {
-            Console.WriteLine("Text widget");
+            if (node == null)
+            {
+                return(false);
+            }
 
-            return(false);
+            return(true);
+        }
+
+        protected override string Render(XElement root, bool skipRoot = false)
+        {
+            return(Text);
         }
     }
 }

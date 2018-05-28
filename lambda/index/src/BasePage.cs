@@ -19,6 +19,10 @@ namespace PlannedOnIndex
 
         public override bool Accept(SillyProxyRequest request, Amazon.Lambda.Core.ILambdaContext context, string[] urlParams)
         {
+            SillyWidget intro = new SillyWidget("intro");
+
+            intro.Bind(new SillyTextWidget("hello", "Hello World!"));
+
             SillyListWidget navPages = new SillyListWidget("navPages");
 
             foreach(KeyValuePair<string, SillyPage> navItem in NavItems)
@@ -29,6 +33,7 @@ namespace PlannedOnIndex
                 navPages.AddItem(item);
             }
 
+            Bind(intro);
             Bind(navPages);
 
             return(true);

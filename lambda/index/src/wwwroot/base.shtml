@@ -16,6 +16,7 @@
     </head>
 
     <body id="page-top" class="border-top border-primary">
+        <silly widget="experiment" key="intro" />
         <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-light border-bottom border-light">
             <div class="container">
@@ -26,11 +27,11 @@
             
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
-                        <SillyList key="navPages">
+                        <silly type="list" key="navPages">
                             <li class="nav-item px-2" silly-key="pageActive">
-                                <a class="nav-link" silly-key="pageLink"><SillyText key="pageName" /></a>
-                            </li>                 
-                        </SillyList>                           
+                                <a class="nav-link" silly-key="pageLink"><span silly-key="pageName" /></a>
+                            </li>  
+                        </silly>
                         <li class="nav-item px-2">
                             <button class="btn btn-outline-primary btn-md navbar-btn" role="button" onclick="location.href='/auth';">Sign in</button>
                         </li>

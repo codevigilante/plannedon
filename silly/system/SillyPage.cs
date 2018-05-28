@@ -66,7 +66,7 @@ namespace SillyWidgets
 
         public abstract bool Accept(SillyProxyRequest request, ILambdaContext context, string[] urlParams);
 
-        protected override bool Resolve(XElement element, SillyTargets target)
+        protected override bool Accept(XElement element)
         {
             Console.WriteLine("Page, wait, what?");
             

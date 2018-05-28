@@ -1,0 +1,3 @@
+<silly widget="experiment">
+    <h1 silly-key="hello">{text will go here}</h1>
+</silly>
