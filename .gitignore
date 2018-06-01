@@ -24,6 +24,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Dd]eploy/
+builds/
 
 # Visual Studio 2015 cache/options directory
 .vs/
